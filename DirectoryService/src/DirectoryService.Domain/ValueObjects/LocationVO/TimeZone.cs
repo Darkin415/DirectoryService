@@ -15,6 +15,10 @@ public class TimeZone : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
             return Error.Create("Значение не может быть пустым");
+        
+        var isValid = TimeZoneInfo.TryFindSystemTimeZoneById(value, out var _);
+        if (isValid == false)
+            return Error.Create($"Временная зона с идентификатором '{value}' не найдена");
 
         return new TimeZone(value);
     }
