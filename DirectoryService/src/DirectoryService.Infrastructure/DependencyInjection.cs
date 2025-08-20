@@ -1,4 +1,6 @@
-﻿using DirectoryService.Infrastructure.Options;
+﻿using DirectoryService.Application.Interfaces;
+using DirectoryService.Infrastructure.Options;
+using DirectoryService.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +12,7 @@ public static class DependencyInjection
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDatabase(configuration);
+        services.AddScoped<IDirectoryRepository, DirectoryRepository>();
     }
 
     private static void AddDatabase(this IServiceCollection services, IConfiguration configuration)

@@ -18,7 +18,8 @@ public class Location : Entity<LocationId>
     
     public Location(
         LocationName name, 
-        TimeZone timeZone)
+        TimeZone timeZone,
+        Address address)
     {
         Id = LocationId.NewLocationId();
         
@@ -31,6 +32,8 @@ public class Location : Entity<LocationId>
         CreatedAt = DateTime.UtcNow;
         
         UpdatedAt = CreatedAt;
+        
+        _addresses.Add(address);
     }
     
     public LocationName Name {get; private set;}
