@@ -1,0 +1,42 @@
+﻿using CSharpFunctionalExtensions;
+
+namespace DirectoryService.Domain.ValueObjects.DepartmentVO;
+
+public class Identifier : ValueObject
+{
+    public Identifier(string value)
+    {
+        Value = value;
+    }
+    
+    public string Value { get; }
+
+    public static Result<Identifier, IEnumerable<Error>> Create(string value)
+    {
+        var errors = new List<Error>();
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            var error = Error.Create("идентификатор не может быть пустым");
+            errors.Add(error);
+        }
+
+        if (value.Length < Constants.Constants.SOMETHING_MIN_LENGTH ||
+            value.Length > Constants.Constants.SOMETHING_MAX_LENGTH)
+        {
+            var error = Error.Create("Идентификатор не может содержать столько символов");
+            errors.Add(error);
+            
+            return errors;
+        }
+
+        return new Identifier(value);
+    }
+    
+    
+    
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        throw new NotImplementedException();
+    }
+}
