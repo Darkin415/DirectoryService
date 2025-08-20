@@ -7,12 +7,10 @@ namespace DirectoryService.Domain.Entities;
 
 public class Department : Entity<DepartmentId>
 {
+    private readonly List<DepartmentLocation> _departmentLocations = [];
+    private readonly List<DepartmentPosition> _departmentPositions = [];
     private readonly List<Department> _departments = [];
     
-    private readonly List<Location> _locations = [];
-    
-    private readonly List<Position> _positions = [];
-
     public Department()
     {
         
@@ -48,9 +46,9 @@ public class Department : Entity<DepartmentId>
     
     public IReadOnlyList<Department> ChildrenDepartments => _departments;
     
-    public IReadOnlyList<Location> Locations => _locations;
-
-    public IReadOnlyList<Position> Positions => _positions;
+    public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentLocations;
+    
+    public IReadOnlyList<DepartmentPosition> DepartmentPositions => _departmentPositions;
     
     public bool IsActive { get; private set; }
     

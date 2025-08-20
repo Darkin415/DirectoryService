@@ -20,34 +20,13 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
                 value => value.Value,
                 value => DepartmentId.Create(value).Value);
         
-        builder.HasMany(d => d.Locations)
-            .WithMany(l => l.Departments)
-            .UsingEntity(
-                "departments_locations",
-                r => r
-                    .HasOne(typeof(Location))
-                    .WithMany()
-                    .HasForeignKey("location_id"),
-                l => l
-                    .HasOne(typeof(Department))
-                    .WithMany()
-                    .HasForeignKey("department_id"),
-                
-                j => j.HasKey("location_id", "department_id"));
-        
-        builder.HasMany(d => d.Positions)
-            .WithMany(p => p.Departments)
-            .UsingEntity(
-                "departments_position",
-                r => r
-                    .HasOne(typeof(Position))
-                    .WithMany()
-                    .HasForeignKey("position_id"),
-                l => l.HasOne(typeof(Department))
-                    .WithMany()
-                    .HasForeignKey("department_id"),
-                
-                j => j.HasKey("position_id", "department_id"));
+        builder.HasMany(d => d.DepartmentLocations)
+            .WithOne(dl => dl.Department)
+            .HasForeignKey(dl => dl.DepartmentId);
+
+        builder.HasMany(d => d.DepartmentPositions)
+            .WithOne(dp => dp.Department)
+            .HasForeignKey(dp => dp.DepartmentId);
         
         builder.HasMany(d => d.ChildrenDepartments)
             .WithOne()

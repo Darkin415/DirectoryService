@@ -77,25 +77,25 @@ namespace DirectoryService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "departments_locations",
+                name: "department_location",
                 schema: "department",
                 columns: table => new
                 {
-                    location_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    department_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    department_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    location_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_departments_locations", x => new { x.location_id, x.department_id });
+                    table.PrimaryKey("PK_department_location", x => new { x.location_id, x.department_id });
                     table.ForeignKey(
-                        name: "FK_departments_locations_departments_department_id",
+                        name: "FK_department_location_departments_department_id",
                         column: x => x.department_id,
                         principalSchema: "department",
                         principalTable: "departments",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_departments_locations_locations_location_id",
+                        name: "FK_department_location_locations_location_id",
                         column: x => x.location_id,
                         principalSchema: "department",
                         principalTable: "locations",
@@ -104,25 +104,33 @@ namespace DirectoryService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "departments_position",
+                name: "department_position",
                 schema: "department",
                 columns: table => new
                 {
+                    department_id = table.Column<Guid>(type: "uuid", nullable: false),
                     position_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    department_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    DepartmentPositionDepartmentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DepartmentPositionPositionId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_departments_position", x => new { x.position_id, x.department_id });
+                    table.PrimaryKey("PK_department_position", x => new { x.position_id, x.department_id });
                     table.ForeignKey(
-                        name: "FK_departments_position_departments_department_id",
+                        name: "FK_department_position_department_position_DepartmentPositionP~",
+                        columns: x => new { x.DepartmentPositionPositionId, x.DepartmentPositionDepartmentId },
+                        principalSchema: "department",
+                        principalTable: "department_position",
+                        principalColumns: new[] { "position_id", "department_id" });
+                    table.ForeignKey(
+                        name: "FK_department_position_departments_department_id",
                         column: x => x.department_id,
                         principalSchema: "department",
                         principalTable: "departments",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_departments_position_positions_position_id",
+                        name: "FK_department_position_positions_position_id",
                         column: x => x.position_id,
                         principalSchema: "department",
                         principalTable: "positions",
@@ -131,33 +139,39 @@ namespace DirectoryService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_department_location_department_id",
+                schema: "department",
+                table: "department_location",
+                column: "department_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_department_position_department_id",
+                schema: "department",
+                table: "department_position",
+                column: "department_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_department_position_DepartmentPositionPositionId_Department~",
+                schema: "department",
+                table: "department_position",
+                columns: new[] { "DepartmentPositionPositionId", "DepartmentPositionDepartmentId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_departments_ParentId",
                 schema: "department",
                 table: "departments",
                 column: "ParentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_departments_locations_department_id",
-                schema: "department",
-                table: "departments_locations",
-                column: "department_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_departments_position_department_id",
-                schema: "department",
-                table: "departments_position",
-                column: "department_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "departments_locations",
+                name: "department_location",
                 schema: "department");
 
             migrationBuilder.DropTable(
-                name: "departments_position",
+                name: "department_position",
                 schema: "department");
 
             migrationBuilder.DropTable(

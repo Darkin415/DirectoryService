@@ -9,7 +9,7 @@ public class Location : Entity<LocationId>
 {
     private readonly List<Address> _addresses = [];
     
-    private readonly List<Department> _departments;
+    private readonly List<DepartmentLocation> _departmentsLocations = [];
 
     public Location()
     {
@@ -43,7 +43,7 @@ public class Location : Entity<LocationId>
     
     public DateTime UpdatedAt {get; private set;}
     
-    public IReadOnlyList<Department> Departments => _departments;
+    public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentsLocations;
     
     public IReadOnlyList<Address> Addresses => _addresses;
     

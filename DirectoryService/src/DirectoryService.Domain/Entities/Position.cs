@@ -6,7 +6,8 @@ namespace DirectoryService.Domain.Entities;
 
 public class Position : Entity<PositionId>
 {
-    private readonly List<Department> _departments = [];
+    private readonly List<DepartmentPosition> _departmentPositions = [];
+
 
     public Position()
     {
@@ -37,5 +38,5 @@ public class Position : Entity<PositionId>
     
     public DateTime UpdatedAt {get; private set;}
 
-    public List<Department> Departments => _departments;
+    public IReadOnlyList<DepartmentPosition> DepartmentPositions => _departmentPositions;
 }
