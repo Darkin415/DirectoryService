@@ -7,6 +7,11 @@ namespace DirectoryService.Domain.Entities;
 public class Position : Entity<PositionId>
 {
     private readonly List<Department> _departments = [];
+
+    public Position()
+    {
+        
+    }
     
     public Position(PositionName name, Description? description)
     {
@@ -24,7 +29,7 @@ public class Position : Entity<PositionId>
     
     public PositionName Name {get; private set;}
     
-    public Description? Description {get; private set;}
+    public Description Description {get; private set;}
     
     public bool IsActive {get; private set;}
     

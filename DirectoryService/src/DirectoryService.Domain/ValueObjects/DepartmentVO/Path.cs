@@ -18,7 +18,7 @@ public class Path : ValueObject
 
         return new Path(value);
     }
-    
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;

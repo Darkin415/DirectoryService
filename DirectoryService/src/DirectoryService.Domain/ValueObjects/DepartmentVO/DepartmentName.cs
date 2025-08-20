@@ -3,7 +3,7 @@
 namespace DirectoryService.Domain.ValueObjects.DepartmentVO;
 
 public class DepartmentName : ValueObject
-{ 
+{
     public string Value { get; }
 
     public DepartmentName(string value)

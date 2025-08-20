@@ -12,8 +12,16 @@ public class Department : Entity<DepartmentId>
     private readonly List<Location> _locations = [];
     
     private readonly List<Position> _positions = [];
+
+    public Department()
+    {
+        
+    }
     
-    public Department(DepartmentName name, Identifier identifier)
+    public Department(
+        DepartmentName name, 
+        Identifier identifier,
+        Path path)
     {
         Id = DepartmentId.NewDepartmentId();
         
@@ -24,13 +32,15 @@ public class Department : Entity<DepartmentId>
         CreatedAt = DateTime.UtcNow;
         
         UpdatedAt = CreatedAt;
+        
+        Path = path;
     }
     
     public DepartmentName Name { get; private set; } 
     
     public string Identifier { get; private set; } = string.Empty;
     
-    public Guid ParentId { get; private set; }
+    public DepartmentId ParentId { get; private set; }
     
     public Path Path  { get; private set; }
     

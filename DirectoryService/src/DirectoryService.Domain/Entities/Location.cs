@@ -10,6 +10,11 @@ public class Location : Entity<LocationId>
     private readonly List<Address> _addresses = [];
     
     private readonly List<Department> _departments;
+
+    public Location()
+    {
+        
+    }
     
     public Location(
         LocationName name, 
@@ -29,8 +34,6 @@ public class Location : Entity<LocationId>
     }
     
     public LocationName Name {get; private set;}
-    
-    public Address Address {get; private set;}
     
     public TimeZone TimeZone { get; private set; }
     

@@ -14,12 +14,12 @@ public class PositionId : ComparableValueObject
     
     public static PositionId NewPositionId() => new PositionId(Guid.NewGuid()); 
     
-    public static Result<LocationId, Error> Create(Guid value)
+    public static Result<PositionId, Error> Create(Guid value)
     {
         if (value == Guid.Empty)
             return Error.Create("Guid не может быть пустым");
         
-        return new LocationId(value);
+        return new PositionId(value);
     }
     
     
