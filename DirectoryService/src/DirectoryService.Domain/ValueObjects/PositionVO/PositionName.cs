@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Contacts.Errors;
 
 namespace DirectoryService.Domain.ValueObjects.PositionVO;
 
@@ -17,14 +18,14 @@ public class PositionName : ValueObject
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            var error = Error.Create("Имя департамента не может быть пустым");
+            var error = Errors.General.ValueIsInvalid("Name");
             
             errors.Add(error);
         }
 
         if (value.Length < Constants.Constants.SOMETHING_MIN_LENGTH || value.Length > Constants.Constants.SOMETHING_MAX_LENGTH)
         {
-            var error = Error.Create("Недопустимый размер имени департамента");
+            var error = Errors.General.ValueIsInvalid("Name");
             errors.Add(error);
             return errors;
         }

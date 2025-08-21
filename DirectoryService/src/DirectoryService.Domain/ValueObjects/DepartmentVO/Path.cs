@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Contacts.Errors;
 
 namespace DirectoryService.Domain.ValueObjects.DepartmentVO;
 
@@ -14,7 +15,7 @@ public class Path : ValueObject
     public static Result<Path, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return Error.Create("Путь не может быть пустым");
+            Errors.General.ValueIsInvalid("Path");
 
         return new Path(value);
     }

@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Contacts.Errors;
 
 namespace DirectoryService.Domain.ValueObjects.PositionVO;
 
@@ -15,7 +16,7 @@ public class Description : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            var error = Error.Create($"Адрес не может быть пустым");
+            var error = Errors.General.ValueIsInvalid("Description");
             return error;
         }
 

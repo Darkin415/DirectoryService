@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Interfaces;
+using DirectoryService.Contacts.Errors;
 using DirectoryService.Domain;
 using DirectoryService.Domain.Entities;
 using DirectoryService.Domain.ValueObjects.LocationVO;
@@ -21,8 +22,12 @@ public class AddLocationsHandler
     public async Task<Result<Guid, Error>> Handle(AddLocationCommand command, CancellationToken cancellationToken)
     {
         var name = LocationName.Create(command.Name);
+        if(name.IsFailure)
+            return Errors.General.ValueIsInvalid("Name");
         
         var timeZone = TimeZone.Create(command.TimeZone);
+        if(timeZone.IsFailure)
+            return Errors.General.ValueIsInvalid("TimeZone");
         
         var address = Address.Create(
             command.Address.Country, 

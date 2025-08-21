@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Contacts.Errors;
 using DirectoryService.Domain.ValueObjects.DepartmentVO;
 using DirectoryService.Domain.ValueObjects.LocationVO;
 
@@ -23,9 +24,9 @@ public class DepartmentLocation
     public static Result<DepartmentLocation, Error> Create(LocationId locationId, DepartmentId departmentId)
     {
         if (locationId.Value == Guid.Empty)
-            return Error.Create("LocationId не может быть пустым");
+            return Errors.General.ValueIsInvalid("LocationId");
         if (departmentId.Value == Guid.Empty)
-            return Error.Create("DepartmentId не может быть пустым");
+            return Errors.General.ValueIsInvalid("DepartmentId");
 
         return new DepartmentLocation(locationId, departmentId);
     }
