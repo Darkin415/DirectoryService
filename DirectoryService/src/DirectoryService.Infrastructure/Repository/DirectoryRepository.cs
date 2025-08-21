@@ -1,4 +1,5 @@
-﻿using DirectoryService.Application.Interfaces;
+﻿using CSharpFunctionalExtensions;
+using DirectoryService.Application.Interfaces;
 using DirectoryService.Domain.Entities;
 
 namespace DirectoryService.Infrastructure.Repository;
@@ -12,12 +13,20 @@ public class DirectoryRepository : IDirectoryRepository
         _dbContext = dbContext;
     }
 
-    public async Task<Guid> AddLocation(Location location, CancellationToken cancellationToken)
+    public async Task<UnitResult<string>> AddLocation(Location location, CancellationToken cancellationToken)
     {
-        await _dbContext.Locations.AddAsync(location, cancellationToken);
+        try
+        {
+            await _dbContext.Locations.AddAsync(location, cancellationToken);
         
-        await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return location.Id.Value;
+            return UnitResult.Success<string>();
+        }
+        
+        catch (Exception ex)
+        {
+            return UnitResult.Failure<string>($"An error occurred while adding the location:{ex.Message}");
+        }
     }
 }
