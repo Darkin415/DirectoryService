@@ -1,3 +1,4 @@
+using DirectoryService.Application;
 using DirectoryService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
 var app = builder.Build();
 
 
