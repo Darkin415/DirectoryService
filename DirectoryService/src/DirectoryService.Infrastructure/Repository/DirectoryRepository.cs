@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Interfaces;
+using DirectoryService.Contacts.Errors;
 using DirectoryService.Domain.Entities;
 using DirectoryService.Domain.ValueObjects.LocationVO;
 using Microsoft.EntityFrameworkCore;
@@ -15,20 +16,18 @@ public class DirectoryRepository : IDirectoryRepository
         _dbContext = dbContext;
     }
 
-    public async Task<UnitResult<string>> AddLocation(Location location, CancellationToken cancellationToken)
+    public async Task<Result<Guid, ErrorList>> AddLocation(Location location, CancellationToken cancellationToken)
     {
         try
         {
             await _dbContext.Locations.AddAsync(location, cancellationToken);
-        
             await _dbContext.SaveChangesAsync(cancellationToken);
-
-            return UnitResult.Success<string>();
+            
+            return location.Id.Value;
         }
-        
         catch (Exception ex)
         {
-            return UnitResult.Failure<string>($"An error occurred while adding the location:{ex.Message}");
+            return Errors.General.ValueIsInvalid().ToErrorList();
         }
     }
     public async Task<bool> AddressExistsAsync(Address address, CancellationToken cancellationToken)

@@ -29,30 +29,32 @@ public class AddLocationsHandler
         if (validationResult.IsValid == false)
             return validationResult.Errors.ToErrors();
                 
-        var name = LocationName.Create(command.Name);
+        var name = new LocationName(command.Name);
         
-        var nameResult = await _repository.LocationNameExist(name.Value, cancellationToken);
+        var nameResult = await _repository.LocationNameExist(name, cancellationToken);
         if(nameResult)
-            return Errors.General.AlreadyExist().ToErrorList();
+            return Errors.General.AlreadyExist("Location").ToErrorList();
         
-        var timeZone = TimeZone.Create(command.TimeZone);
+        var timeZone = new TimeZone(command.TimeZone);
         
-        var address = Address.Create(
+        var address = new Address(
             command.Address.Country, 
             command.Address.City, 
             command.Address.Street, 
             command.Address.Building, 
             command.Address.RoomNumber);
 
-       var addressResult = await _repository.AddressExistsAsync(address.Value, cancellationToken);
+       var addressResult = await _repository.AddressExistsAsync(address, cancellationToken);
        if (addressResult)
-           return Errors.General.AlreadyExist().ToErrorList();
+           return Errors.General.AlreadyExist("Address").ToErrorList();
        
-        var location = new Domain.Entities.Location(name.Value, timeZone.Value, address.Value);
+        var location = new Domain.Entities.Location(name, timeZone, address);
         
         var locationResult = await _repository.AddLocation(location, cancellationToken);
+        if (locationResult.IsFailure)
+            return locationResult.Error;
         
-        _logger.LogInformation($"Location {name.Value} created");
+        _logger.LogInformation($"Location {name} created");
 
         return location.Id.Value;
 
