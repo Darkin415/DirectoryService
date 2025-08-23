@@ -1,6 +1,8 @@
 using DirectoryService.Application;
+using DirectoryService.Application.Location.AddLocation;
 using DirectoryService.Infrastructure;
 using DirectoryService.Presentation.Middlewares;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -20,7 +22,7 @@ builder.Services.AddControllers();
 builder.Host.UseSerilog();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddValidatorsFromAssemblyContaining<AddLocationCommandValidator>();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 var app = builder.Build();

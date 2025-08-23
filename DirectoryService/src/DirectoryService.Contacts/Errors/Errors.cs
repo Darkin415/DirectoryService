@@ -12,7 +12,12 @@ public static class Errors
         
         public static Error AlreadyExist()
         {               
-            return Error.Validation("record.already.exist", "Volunteer already exist");
+            return Error.Validation("record.already.exist", "Record already exist");
+        }
+
+        public static Error NameNotFound(string name)
+        {
+            return Error.Validation("record.name.notfound", "Record not found");
         }
         
         public static Error NotFound(Guid? id = null)
