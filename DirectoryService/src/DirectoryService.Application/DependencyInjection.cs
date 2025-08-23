@@ -1,4 +1,4 @@
-﻿using DirectoryService.Application.Add.AddLocation;
+﻿using DirectoryService.Application.Location.AddLocation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DirectoryService.Application;

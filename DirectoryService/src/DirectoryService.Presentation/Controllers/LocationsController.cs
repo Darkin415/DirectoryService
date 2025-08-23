@@ -1,11 +1,8 @@
-using DirectoryService.Application.Add.AddLocation;
+using DirectoryService.Application.Location.AddLocation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DirectoryService.Presentation.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class LocationsController : ControllerBase
+public class LocationsController : ApplicationController
 {
     [HttpPost("api/locations")]
     public async Task<IActionResult> AddLocation(

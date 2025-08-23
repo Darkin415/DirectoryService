@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Contacts.Errors;
 
 namespace DirectoryService.Domain.ValueObjects.DepartmentVO;
 
@@ -17,14 +18,14 @@ public class Identifier : ValueObject
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            var error = Error.Create("идентификатор не может быть пустым");
+            var error = Errors.General.ValueIsInvalid("Identifier");
             errors.Add(error);
         }
 
         if (value.Length < Constants.Constants.SOMETHING_MIN_LENGTH ||
             value.Length > Constants.Constants.SOMETHING_MAX_LENGTH)
         {
-            var error = Error.Create("Идентификатор не может содержать столько символов");
+            var error = Errors.General.ValueIsInvalid("Identifier");
             errors.Add(error);
             
             return errors;

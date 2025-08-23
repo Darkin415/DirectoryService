@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Contacts.Errors;
 using DirectoryService.Domain.ValueObjects.LocationVO;
 
 namespace DirectoryService.Domain.ValueObjects.PositionVO;
@@ -17,7 +18,7 @@ public class PositionId : ComparableValueObject
     public static Result<PositionId, Error> Create(Guid value)
     {
         if (value == Guid.Empty)
-            return Error.Create("Guid не может быть пустым");
+            return Errors.General.ValueIsInvalid("Position");
         
         return new PositionId(value);
     }
