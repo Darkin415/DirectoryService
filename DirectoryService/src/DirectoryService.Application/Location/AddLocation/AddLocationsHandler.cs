@@ -1,20 +1,21 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Interfaces;
 using DirectoryService.Contacts.Errors;
-using DirectoryService.Domain;
-using DirectoryService.Domain.Entities;
 using DirectoryService.Domain.ValueObjects.LocationVO;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using TimeZone = DirectoryService.Domain.ValueObjects.LocationVO.TimeZone;
 
-namespace DirectoryService.Application.Add.AddLocation;
+namespace DirectoryService.Application.Location.AddLocation;
 
 public class AddLocationsHandler
 {
     private readonly IDirectoryRepository _repository;
     private readonly ILogger<AddLocationsHandler> _logger;
 
-    public AddLocationsHandler(IDirectoryRepository repository, ILogger<AddLocationsHandler> logger)
+    public AddLocationsHandler(
+        IDirectoryRepository repository, 
+        ILogger<AddLocationsHandler> logger)
     {
         _repository = repository;
         _logger = logger;
@@ -36,7 +37,7 @@ public class AddLocationsHandler
             command.Address.Building, 
             command.Address.RoomNumber);
         
-        var location = new Location(name.Value, timeZone.Value, address.Value);
+        var location = new Domain.Entities.Location(name.Value, timeZone.Value, address.Value);
         
         var locationResult = await _repository.AddLocation(location, cancellationToken);
         
