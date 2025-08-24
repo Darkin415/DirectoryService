@@ -47,7 +47,7 @@ public class LocationConfiguration  : IEntityTypeConfiguration<Location>
                     c => c.ToList()))
             .HasColumnName("addresses")
             .HasColumnType("jsonb");
-
+        
         builder.Property(l => l.IsActive)
             .IsRequired()
             .HasColumnName("is_active");

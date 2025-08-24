@@ -33,8 +33,14 @@ public class DirectoryRepository : IDirectoryRepository
     public async Task<bool> AddressExistsAsync(Address address, CancellationToken cancellationToken)
     {
         return await _dbContext.Locations
-            .SelectMany(l => l.Addresses)  
-            .AnyAsync(a => a == address, cancellationToken);
+            .SelectMany(l => l.Addresses)
+            .AnyAsync(a =>
+                    a.Country == address.Country &&
+                    a.City == address.City &&
+                    a.Street == address.Street &&
+                    a.Building == address.Building &&
+                    a.RoomNumber == address.RoomNumber,
+                cancellationToken);
     }
     public Task<bool> LocationNameExist(LocationName name, CancellationToken cancellationToken)
     {

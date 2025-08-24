@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DirectoryService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250820112517_Initial")]
+    [Migration("20250824082325_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -154,8 +154,8 @@ namespace DirectoryService.Infrastructure.Migrations
 
                             b1.Property<string>("Value")
                                 .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("character varying(150)")
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
                                 .HasColumnName("location_name");
                         });
 
@@ -197,8 +197,8 @@ namespace DirectoryService.Infrastructure.Migrations
                             b1.IsRequired();
 
                             b1.Property<string>("Value")
-                                .HasMaxLength(150)
-                                .HasColumnType("character varying(150)")
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
                                 .HasColumnName("position_description");
                         });
 
@@ -208,8 +208,8 @@ namespace DirectoryService.Infrastructure.Migrations
 
                             b1.Property<string>("Value")
                                 .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("character varying(150)")
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
                                 .HasColumnName("position_name");
                         });
 

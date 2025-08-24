@@ -51,7 +51,7 @@ namespace DirectoryService.Infrastructure.Migrations
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     addresses = table.Column<string>(type: "jsonb", nullable: false),
-                    location_name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    location_name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     location_timezone = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -68,8 +68,8 @@ namespace DirectoryService.Infrastructure.Migrations
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    position_description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
-                    position_name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false)
+                    position_description = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: true),
+                    position_name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
                 },
                 constraints: table =>
                 {

@@ -25,4 +25,10 @@ public static class CustomValidator
     {
         return new ErrorList(failures.Select(failure => Error.Deserialize(failure.ErrorMessage)));
     }
+    
+    public static IRuleBuilderOptions<T, TProperty> WithError<T, TProperty>(
+        this IRuleBuilderOptions<T, TProperty> rule, Error error)
+    {
+        return rule.WithMessage(error.Serialize());
+    }
 }

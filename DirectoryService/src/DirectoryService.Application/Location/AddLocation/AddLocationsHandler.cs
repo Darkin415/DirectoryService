@@ -27,28 +27,28 @@ public class AddLocationsHandler
     {
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (validationResult.IsValid == false)
-            return validationResult.Errors.ToErrors();
+            return validationResult.ToErrorList();
                 
-        var name = new LocationName(command.Name);
+        var name = LocationName.Create(command.Name);
         
-        var nameResult = await _repository.LocationNameExist(name, cancellationToken);
+        var nameResult = await _repository.LocationNameExist(name.Value, cancellationToken);
         if(nameResult)
             return Errors.General.AlreadyExist("Location").ToErrorList();
         
-        var timeZone = new TimeZone(command.TimeZone);
+        var timeZone =  TimeZone.Create(command.TimeZone);
         
-        var address = new Address(
+        var address =  Address.Create(
             command.Address.Country, 
             command.Address.City, 
             command.Address.Street, 
             command.Address.Building, 
             command.Address.RoomNumber);
 
-       var addressResult = await _repository.AddressExistsAsync(address, cancellationToken);
+       var addressResult = await _repository.AddressExistsAsync(address.Value, cancellationToken);
        if (addressResult)
            return Errors.General.AlreadyExist("Address").ToErrorList();
        
-        var location = new Domain.Entities.Location(name, timeZone, address);
+        var location = new Domain.Entities.Location(name.Value, timeZone.Value, address.Value);
         
         var locationResult = await _repository.AddLocation(location, cancellationToken);
         if (locationResult.IsFailure)
