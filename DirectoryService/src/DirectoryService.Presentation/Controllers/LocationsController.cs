@@ -1,4 +1,5 @@
 using DirectoryService.Application.Location.AddLocation;
+using DirectoryService.Contacts.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DirectoryService.Presentation.Controllers;
@@ -16,6 +17,8 @@ public class LocationsController : ApplicationController
             request.TimeZone);
         
        var result =  await handler.Handle(command, cancellationToken);
+       if(result.IsFailure)
+           return BadRequest(result.Error);
 
        return Ok(result.Value);
     }

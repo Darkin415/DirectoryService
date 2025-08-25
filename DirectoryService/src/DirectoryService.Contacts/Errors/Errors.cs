@@ -10,9 +10,15 @@ public static class Errors
             return Error.Validation("value.is.invalid", $"{label} is invalid");
         }
         
-        public static Error AlreadyExist()
-        {               
-            return Error.Validation("record.already.exist", "Volunteer already exist");
+        public static Error AlreadyExist(string? name = null)
+        {
+            var label = name ?? "value";
+            return Error.Validation("record.already.exist", $"{label} already exist");
+        }
+
+        public static Error NameNotFound(string name)
+        {
+            return Error.Validation("record.name.notfound", "Record not found");
         }
         
         public static Error NotFound(Guid? id = null)

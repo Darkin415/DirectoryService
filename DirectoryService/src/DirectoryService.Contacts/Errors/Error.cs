@@ -51,6 +51,8 @@ public class Error
     }
 
     public ErrorList ToErrorList() => new([this]);
+    
+    
 }
 
 public enum ErrorType

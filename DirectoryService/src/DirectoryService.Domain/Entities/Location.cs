@@ -7,8 +7,6 @@ namespace DirectoryService.Domain.Entities;
 
 public class Location : Entity<LocationId>
 {
-    private readonly List<Address> _addresses = [];
-    
     private readonly List<DepartmentLocation> _departmentsLocations = [];
 
     public Location()
@@ -33,10 +31,12 @@ public class Location : Entity<LocationId>
         
         UpdatedAt = CreatedAt;
         
-        _addresses.Add(address);
+        Address = address;
     }
     
     public LocationName Name {get; private set;}
+    
+    public Address Address {get; private set;}
     
     public TimeZone TimeZone { get; private set; }
     
@@ -47,7 +47,5 @@ public class Location : Entity<LocationId>
     public DateTime UpdatedAt {get; private set;}
     
     public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentsLocations;
-    
-    public IReadOnlyList<Address> Addresses => _addresses;
     
 }

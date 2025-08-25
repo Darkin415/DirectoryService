@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Contacts.Errors;
 using DirectoryService.Domain.ValueObjects;
 using DirectoryService.Domain.ValueObjects.DepartmentVO;
 using Path = DirectoryService.Domain.ValueObjects.DepartmentVO.Path;
@@ -16,12 +17,14 @@ public class Department : Entity<DepartmentId>
         
     }
     
-    public Department(
+    private Department(
+        DepartmentId id,
         DepartmentName name, 
         Identifier identifier,
-        Path path)
+        Path path,
+        int depth)
     {
-        Id = DepartmentId.NewDepartmentId();
+        Id = id;
         
         Name = name;
         
@@ -29,12 +32,20 @@ public class Department : Entity<DepartmentId>
         
         CreatedAt = DateTime.UtcNow;
         
-        UpdatedAt = CreatedAt;
+        ChildrenCount = ChildrenDepartments.Count;
+        
+        UpdatedAt =  DateTime.UtcNow;
         
         Path = path;
+        
+        Depth = depth;
     }
     
+    public DepartmentId Id { get; private set; }
+    
     public DepartmentName Name { get; private set; } 
+    
+    public int Depth { get; private set; }
     
     public string Identifier { get; private set; } = string.Empty;
     
@@ -55,5 +66,38 @@ public class Department : Entity<DepartmentId>
     public DateTime CreatedAt { get; private set; }
     
     public DateTime UpdatedAt { get; private set; }
-  
+
+    public static Result<Department, Error> CreateParent(
+        DepartmentName name,
+        Identifier identifier,
+        DepartmentId? departmentId = null)
+    {
+        var path = ValueObjects.DepartmentVO.Path.CreateParent(identifier);
+        
+        return new Department(
+            departmentId ?? new DepartmentId(Guid.NewGuid()),
+            name,
+            identifier,            
+            path,
+            0
+        );
+    }
+
+    public static Result<Department, Error> CreateChild(
+        DepartmentName name,
+        Identifier identifier,
+        Department parent,
+        DepartmentId? departmentId = null)
+    {
+        
+        var path = parent.Path.CreateChild(identifier);
+        
+        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), name, identifier, path, parent.Depth + 1);
+    }
+    
+    public UnitResult<Error> AddDepartmentLocations(List<DepartmentLocation> departmentLocations)
+    {
+        _departmentLocations.AddRange(departmentLocations);
+        return UnitResult.Success<Error>();
+    }
 }

@@ -1,5 +1,5 @@
 ﻿using DirectoryService.Contacts.Dtos;
 
-namespace DirectoryService.Application.Location.AddLocation;
+namespace DirectoryService.Contacts.Requests;
 
 public record AddLocationsRequest(string Name, AddressDto Address, string TimeZone);

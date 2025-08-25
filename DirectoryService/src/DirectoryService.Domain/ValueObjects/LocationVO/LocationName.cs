@@ -12,22 +12,17 @@ public class LocationName : ValueObject
         Value = value;
     }
 
-    public static Result<LocationName, IEnumerable<Error>> Create(string value)
+    public static Result<LocationName, Error> Create(string value)
     {
-        var errors = new List<Error>();
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            var error = Errors.General.ValueIsInvalid("Location name");
-            
-            errors.Add(error);
+            return Errors.General.ValueIsInvalid();
         }
 
         if (value.Length < Constants.Constants.SOMETHING_MIN_LENGTH || value.Length > Constants.Constants.SOMETHING_MAX_LENGTH)
         {
-            var error = Errors.General.ValueIsInvalid("name");
-            errors.Add(error);
-            return errors;
+            return Errors.General.ValueIsInvalid();
         }
         
         return new LocationName(value);
