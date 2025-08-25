@@ -56,8 +56,7 @@ public class DirectoryRepository : IDirectoryRepository
                 l.Address.RoomNumber == address.RoomNumber,
             cancellationToken);
     }
-
-
+    
     public async Task<Result<Department, Error>> GetDepartmentById(DepartmentId departmentId,
         CancellationToken cancellationToken)
     {

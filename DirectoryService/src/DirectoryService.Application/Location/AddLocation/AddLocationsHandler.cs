@@ -56,7 +56,6 @@ public class AddLocationsHandler
         
         var location = new Domain.Entities.Location(name.Value, timeZone.Value, address.Value);
         
-        
         var locationResult = await _repository.AddLocation(location, cancellationToken);
         if (locationResult.IsFailure)
             return locationResult.Error;
@@ -64,6 +63,5 @@ public class AddLocationsHandler
         _logger.LogInformation($"Location {name} created");
 
         return location.Id.Value;
-
     }
 }
