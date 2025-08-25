@@ -9,7 +9,7 @@ public class DepartmentLocation
 {
     protected DepartmentLocation() { }
 
-    private DepartmentLocation(LocationId locationId, DepartmentId  departmentId)
+    public DepartmentLocation(LocationId locationId, DepartmentId  departmentId)
     {
         LocationId = locationId;
         DepartmentId = departmentId;

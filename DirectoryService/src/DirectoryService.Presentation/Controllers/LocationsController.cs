@@ -1,4 +1,5 @@
 using DirectoryService.Application.Location.AddLocation;
+using DirectoryService.Contacts.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DirectoryService.Presentation.Controllers;

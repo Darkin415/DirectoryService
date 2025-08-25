@@ -24,6 +24,10 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .WithOne(dl => dl.Department)
             .HasForeignKey(dl => dl.DepartmentId);
 
+        builder.Property(d => d.Depth)
+            .IsRequired()
+            .HasColumnName("depth");
+
         builder.HasMany(d => d.DepartmentPositions)
             .WithOne(dp => dp.Department)
             .HasForeignKey(dp => dp.DepartmentId);

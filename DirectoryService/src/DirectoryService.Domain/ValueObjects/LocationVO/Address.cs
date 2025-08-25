@@ -5,6 +5,10 @@ namespace DirectoryService.Domain.ValueObjects.LocationVO;
 
 public class Address : ValueObject
 {
+    public Address()
+    {
+        
+    }
     public Address(string country, string city, string street, string building, int roomNumber)
     {
         Country = country;

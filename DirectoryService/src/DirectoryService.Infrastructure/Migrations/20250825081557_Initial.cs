@@ -20,6 +20,7 @@ namespace DirectoryService.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    depth = table.Column<int>(type: "integer", nullable: false),
                     department_identifier = table.Column<string>(type: "text", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     children_count = table.Column<int>(type: "integer", nullable: false),
@@ -50,7 +51,11 @@ namespace DirectoryService.Infrastructure.Migrations
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    addresses = table.Column<string>(type: "jsonb", nullable: false),
+                    location_building = table.Column<string>(type: "text", nullable: false),
+                    location_city = table.Column<string>(type: "text", nullable: false),
+                    location_country = table.Column<string>(type: "text", nullable: false),
+                    location_room_number = table.Column<int>(type: "integer", nullable: false),
+                    location_street = table.Column<string>(type: "text", nullable: false),
                     location_name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     location_timezone = table.Column<string>(type: "text", nullable: false)
                 },

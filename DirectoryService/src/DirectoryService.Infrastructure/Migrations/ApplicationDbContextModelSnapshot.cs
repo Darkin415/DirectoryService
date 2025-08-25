@@ -37,6 +37,10 @@ namespace DirectoryService.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<int>("Depth")
+                        .HasColumnType("integer")
+                        .HasColumnName("depth");
+
                     b.Property<string>("Identifier")
                         .IsRequired()
                         .HasColumnType("text")
@@ -128,11 +132,6 @@ namespace DirectoryService.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Addresses")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("addresses");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -144,6 +143,35 @@ namespace DirectoryService.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Address", "DirectoryService.Domain.Entities.Location.Address#Address", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Building")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("location_building");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("location_city");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("location_country");
+
+                            b1.Property<int>("RoomNumber")
+                                .HasColumnType("integer")
+                                .HasColumnName("location_room_number");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("location_street");
+                        });
 
                     b.ComplexProperty<Dictionary<string, object>>("Name", "DirectoryService.Domain.Entities.Location.Name#LocationName", b1 =>
                         {

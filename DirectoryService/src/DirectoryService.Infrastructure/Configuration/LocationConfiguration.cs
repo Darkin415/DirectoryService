@@ -36,17 +36,26 @@ public class LocationConfiguration  : IEntityTypeConfiguration<Location>
             lp.Property(lp => lp.Value)
                 .HasColumnName("location_timezone");
         });
-        
-        builder.Property(x => x.Addresses)
-            .HasConversion(
-                value => JsonSerializer.Serialize(value, JsonSerializerOptions.Default),
-                valueDb => JsonSerializer.Deserialize<IReadOnlyList<Address>>(valueDb, JsonSerializerOptions.Default)!,
-                new ValueComparer<IReadOnlyList<Address>>(
-                    (c1, c2) => c1!.SequenceEqual(c2!),
-                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c.ToList()))
-            .HasColumnName("addresses")
-            .HasColumnType("jsonb");
+
+        builder.ComplexProperty(l => l.Address, lp =>
+        {
+            lp.Property(b => b.Country)
+                .IsRequired()
+                .HasColumnName("location_country");
+                
+            lp.Property(b => b.Building)
+                .IsRequired()
+                .HasColumnName("location_building");
+            lp.Property(b => b.City)
+                .IsRequired()
+                .HasColumnName("location_city");
+            lp.Property(b => b.RoomNumber)
+                .IsRequired()
+                .HasColumnName("location_room_number");
+            lp.Property(b => b.Street)
+                .IsRequired()
+                .HasColumnName("location_street");
+        });
         
         builder.Property(l => l.IsActive)
             .IsRequired()

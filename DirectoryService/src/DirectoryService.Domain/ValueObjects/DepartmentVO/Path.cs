@@ -5,6 +5,7 @@ namespace DirectoryService.Domain.ValueObjects.DepartmentVO;
 
 public class Path : ValueObject
 {
+    private const char Separator = '/';
     public string Value { get; }
 
     public Path(string value)
@@ -12,12 +13,14 @@ public class Path : ValueObject
         Value = value;
     }
 
-    public static Result<Path, Error> Create(string value)
+    public static Path CreateParent(Identifier identifier)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            Errors.General.ValueIsInvalid("Path");
+        return new Path(identifier.Value);
+    }
 
-        return new Path(value);
+    public Path CreateChild(Identifier childIdentifier)
+    {
+        return new Path(Value + Separator + childIdentifier.Value);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()
