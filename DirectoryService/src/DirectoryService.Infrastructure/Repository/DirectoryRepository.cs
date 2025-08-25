@@ -22,6 +22,22 @@ public class DirectoryRepository : IDirectoryRepository
         _dbConnection = dbConnection;
     }
 
+
+    public async Task<Result<Guid, ErrorList>> AddPositionAsync(Position position, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _dbContext.Positions.AddAsync(position, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return position.Id.Value;
+        }
+        catch (Exception ex)
+        {
+            
+            return Errors.General.ValueIsInvalid().ToErrorList();
+        }
+    }
+
     public async Task<Result<Guid, ErrorList>> AddLocation(Location location, CancellationToken cancellationToken)
     {
         try
@@ -36,15 +52,41 @@ public class DirectoryRepository : IDirectoryRepository
             return Errors.General.ValueIsInvalid().ToErrorList();
         }
     }
-    
-    public async Task<bool> AllLocationsExistAsync(List<Guid> locationIds, CancellationToken cancellationToken)
-    {
-        var idsList = locationIds.ToList();
-        var count = await _dbContext.Locations
-            .CountAsync(x => idsList.Contains(x.Id.Value), cancellationToken);
 
-        return count == idsList.Count;
+    public async Task<Result<Guid, ErrorList>> AddDepartment(Department department, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _dbContext.Departments.AddAsync(department, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        
+            return department.Id.Value;
+        }
+        
+        catch (Exception ex)
+        {
+            return Errors.General.ValueIsInvalid().ToErrorList();
+        }
     }
+
+    // public async Task<bool> AllLocationExistsAsync(List<Guid> locations, CancellationToken cancellationToken)
+    // {
+    //     var count = await _dbContext.Locations
+    //         .Where(l => locations.Contains(l.Id))
+    //         .Where(l => l.IsActive)
+    //         .CountAsync(cancellationToken);
+    //
+    //     return count == locations.Count;
+    // }
+
+
+    // public async Task<bool> IdentifierExistsAsync(Guid? parentId, Identifier identifier, CancellationToken cancellationToken)
+    // {
+    //     return await _dbContext.Departments
+    //         .AnyAsync(d => d.ParentId.Value == parentId.Value && d.Identifier.Value == identifier.Value, cancellationToken);
+    // }
+
+    
 
     public Task<bool> AddressExistsAsync(Address address, CancellationToken cancellationToken)
     {

@@ -27,6 +27,12 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
         builder.Property(d => d.Depth)
             .IsRequired()
             .HasColumnName("depth");
+        
+        builder.Property(d => d.ParentId)
+            .HasColumnName("parentId")
+            .HasConversion(
+                value => value.Value,
+                value => DepartmentId.Create(value).Value);
 
         builder.HasMany(d => d.DepartmentPositions)
             .WithOne(dp => dp.Department)
@@ -44,14 +50,17 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
                 .HasColumnName("department_name");
         });
 
-        builder.Property(d => d.Identifier)
-            .HasColumnName("department_identifier");
+        builder.ComplexProperty(d => d.Identifier, db =>
+        {
+            db.Property(d => d.Value)
+                .HasColumnName("department_identifier");
+        });
         
-        builder.Property(x => x.ParentId)
-            .IsRequired(false)
-            .HasConversion(
-                value => value == null ? (Guid?)null : value.Value,
-                value => value == null ? null : DepartmentId.Create((Guid)value).Value);
+        // builder.Property(x => x.ParentId)
+        //     .IsRequired(false)
+        //     .HasConversion(
+        //         value => value == null ? (Guid?)null : value.Value,
+        //         value => value == null ? null : DepartmentId.Create((Guid)value).Value);
 
         builder.ComplexProperty(d => d.Path, db =>
         {

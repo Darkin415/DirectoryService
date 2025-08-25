@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DirectoryService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250825081557_Initial")]
+    [Migration("20250825182133_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -44,21 +44,27 @@ namespace DirectoryService.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("depth");
 
-                    b.Property<string>("Identifier")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("department_identifier");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ParentId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("parentId");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Identifier", "DirectoryService.Domain.Entities.Department.Identifier#Identifier", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("department_identifier");
+                        });
 
                     b.ComplexProperty<Dictionary<string, object>>("Name", "DirectoryService.Domain.Entities.Department.Name#DepartmentName", b1 =>
                         {
@@ -133,7 +139,7 @@ namespace DirectoryService.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("location_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")

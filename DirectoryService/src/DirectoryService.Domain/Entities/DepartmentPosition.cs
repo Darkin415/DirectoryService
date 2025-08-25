@@ -11,7 +11,7 @@ public class DepartmentPosition
     
     private readonly List<DepartmentPosition> _departmentPositions = [];
 
-    private DepartmentPosition(PositionId positionId, DepartmentId departmentId)
+    public DepartmentPosition(PositionId positionId, DepartmentId departmentId)
     {
         PositionId = positionId;
         DepartmentId = departmentId;
