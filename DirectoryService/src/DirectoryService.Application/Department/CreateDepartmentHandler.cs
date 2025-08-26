@@ -14,14 +14,19 @@ public class CreateDepartmentHandler
 {
     private readonly IValidator<CreateDepartmentCommand> _validator;
     private readonly ILogger<CreateDepartmentHandler> _logger;
-    private readonly IDirectoryRepository _repository;
+    private readonly IDirectoryRepository _directoryRepository;
+    private readonly ILocationRepository _locationRepository;
 
-    public CreateDepartmentHandler(ILogger<CreateDepartmentHandler> logger,
-        IValidator<CreateDepartmentCommand> validator, IDirectoryRepository repository)
+    public CreateDepartmentHandler(
+        ILogger<CreateDepartmentHandler> logger,
+        IValidator<CreateDepartmentCommand> validator, 
+        IDirectoryRepository directoryRepository, 
+        ILocationRepository locationRepository)
     {
         _logger = logger;
         _validator = validator;
-        _repository = repository;
+        _directoryRepository = directoryRepository;
+        _locationRepository = locationRepository;
     }
 
 
@@ -32,6 +37,25 @@ public class CreateDepartmentHandler
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
+        //проверка локаций
+        var locationIdResults = command.LocationsIds
+            .Distinct()
+            .Select(LocationId.Create) 
+            .ToList();
+        
+        var isIdentifierExist = 
+            await _directoryRepository.IsIdentifierExistAsync(command.Identifier, cancellationToken);
+        if(isIdentifierExist)
+            return Errors.General.AlreadyExist("Identifier").ToErrorList();
+        
+        var locationIds = locationIdResults
+            .Select(r => r.Value)
+            .ToList();
+        
+        var locationsResult = await _locationRepository
+            .GetLocationsById(locationIds, cancellationToken);
+        if(locationsResult.IsFailure)
+            return locationsResult.Error.ToErrorList();
 
         // создание VO
         var name = DepartmentName.Create(command.Name);
@@ -39,21 +63,20 @@ public class CreateDepartmentHandler
         var identifier = Identifier.Create(command.Identifier);
         
         var parentId = command.ParentId;
-        // var identifierResult = await _repository.IdentifierExistsAsync(parentId, identifier.Value, cancellationToken);
-        // if(identifierResult)
-        //     return Errors.General.AlreadyExist("Identifier already exists").ToErrorList();
-
+        
         Result<Domain.Entities.Department, Error> createDepartmentResult;
 
         if (parentId == null)
             createDepartmentResult = Domain.Entities.Department.CreateParent(name.Value, identifier.Value, null);
         else
         {
+            
             var departmentId = DepartmentId.Create(parentId.Value);
 
-            var parent = await _repository.GetDepartmentById(departmentId.Value, cancellationToken);
+            var parent = await _directoryRepository.GetDepartmentById(departmentId.Value, cancellationToken);
             if (parent.IsFailure)
                 return parent.Error.ToErrorList();
+            
 
             createDepartmentResult = Domain.Entities.Department.CreateChild(name.Value, identifier.Value, parent.Value);
             if (createDepartmentResult.IsFailure)
@@ -61,8 +84,8 @@ public class CreateDepartmentHandler
         }
 
         var department = createDepartmentResult.Value;
-
-        var departmentLocations = command.Locations
+        
+        var departmentLocations = command.LocationsIds
             .Select(locationId => new DepartmentLocation(
                 departmentId: department.Id,
                 locationId: LocationId.Create(locationId).Value
@@ -73,7 +96,7 @@ public class CreateDepartmentHandler
         if(addLocations.IsFailure)
             return addLocations.Error.ToErrorList();
         
-        var departmentResult =  await _repository.AddDepartment(department, cancellationToken);
+        var departmentResult =  await _directoryRepository.AddDepartment(department, cancellationToken);
         if (departmentResult.IsFailure)
             return departmentResult.Error;
         

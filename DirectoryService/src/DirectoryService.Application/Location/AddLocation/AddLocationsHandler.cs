@@ -11,17 +11,21 @@ namespace DirectoryService.Application.Location.AddLocation;
 
 public class AddLocationsHandler
 {
-    private readonly IDirectoryRepository _repository;
+    private readonly IDirectoryRepository _directoryRepository;
+    private readonly ILocationRepository _locationRepository;
     private readonly ILogger<AddLocationsHandler> _logger;
     private readonly IValidator<AddLocationCommand> _validator;
 
     public AddLocationsHandler(
-        IDirectoryRepository repository, 
-        ILogger<AddLocationsHandler> logger, IValidator<AddLocationCommand> validator)
+        IDirectoryRepository directoryRepository, 
+        ILogger<AddLocationsHandler> logger, 
+        IValidator<AddLocationCommand> validator, 
+        ILocationRepository locationRepository)
     {
-        _repository = repository;
+        _directoryRepository = directoryRepository;
         _logger = logger;
         _validator = validator;
+        _locationRepository = locationRepository;
     }
     public async Task<Result<Guid, ErrorList>> Handle(AddLocationCommand command, CancellationToken cancellationToken)
     {
@@ -33,7 +37,7 @@ public class AddLocationsHandler
         if (name.IsFailure)
             return name.Error.ToErrorList();
         
-        var nameResult = await _repository.LocationNameExist(name.Value, cancellationToken);
+        var nameResult = await _directoryRepository.LocationNameExist(name.Value, cancellationToken);
         if(nameResult)
             return Errors.General.AlreadyExist("Location").ToErrorList();
         
@@ -50,13 +54,13 @@ public class AddLocationsHandler
         if(address.IsFailure)
             return address.Error.ToErrorList();
 
-        var addressExist = await _repository.AddressExistsAsync(address.Value, cancellationToken);
+        var addressExist = await _directoryRepository.AddressExistsAsync(address.Value, cancellationToken);
         if(addressExist)
             return Errors.General.AlreadyExist("Address").ToErrorList();
         
         var location = new Domain.Entities.Location(name.Value, timeZone.Value, address.Value);
         
-        var locationResult = await _repository.AddLocation(location, cancellationToken);
+        var locationResult = await _locationRepository.AddLocation(location, cancellationToken);
         if (locationResult.IsFailure)
             return locationResult.Error;
         

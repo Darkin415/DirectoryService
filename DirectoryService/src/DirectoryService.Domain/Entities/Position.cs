@@ -27,6 +27,8 @@ public class Position : Entity<PositionId>
         
         UpdatedAt = CreatedAt;
         
+        IsActive = true;
+        
     }
     
     public PositionName Name {get; private set;}

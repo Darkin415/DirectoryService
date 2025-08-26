@@ -26,5 +26,10 @@ public static class Errors
             var forId = id == null ? "" : $"for Id '{id}'";
             return Error.NotFound("record.not.found", $"record not found {forId}");
         }
+
+        public static Error LocationNotFound(string? locationName = null)
+        {
+            return Error.NotFound("locations.not.found", "Locations not found");
+        }
     }
 }

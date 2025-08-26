@@ -16,6 +16,10 @@ public static class DependencyInjection
         services.AddDatabase(configuration);
 
         services.AddScoped<IDirectoryRepository, DirectoryRepository>();
+        
+        services.AddScoped<IPositionRepository, PositionRepository>();
+        
+        services.AddScoped<ILocationRepository, LocationRepository>();
 
         // Подключение для Dapper
         services.AddScoped<IDbConnection>(sp =>
