@@ -33,9 +33,6 @@ public class Identifier : ValueObject
 
         return new Identifier(value);
     }
-    
-    
-    
     protected override IEnumerable<object> GetEqualityComponents()
     {
         throw new NotImplementedException();

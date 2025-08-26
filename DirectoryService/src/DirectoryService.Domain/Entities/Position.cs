@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Contacts.Errors;
 using DirectoryService.Domain.ValueObjects;
 using DirectoryService.Domain.ValueObjects.PositionVO;
 
@@ -26,6 +27,8 @@ public class Position : Entity<PositionId>
         
         UpdatedAt = CreatedAt;
         
+        IsActive = true;
+        
     }
     
     public PositionName Name {get; private set;}
@@ -39,4 +42,10 @@ public class Position : Entity<PositionId>
     public DateTime UpdatedAt {get; private set;}
 
     public IReadOnlyList<DepartmentPosition> DepartmentPositions => _departmentPositions;
+    
+    public UnitResult<Error> AddDepartmentPositions(List<DepartmentPosition> departmentPositions)
+    {
+        _departmentPositions.AddRange(departmentPositions);
+        return UnitResult.Success<Error>();
+    }
 }

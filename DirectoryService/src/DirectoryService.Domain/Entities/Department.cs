@@ -22,7 +22,8 @@ public class Department : Entity<DepartmentId>
         DepartmentName name, 
         Identifier identifier,
         Path path,
-        int depth)
+        int depth,
+        DepartmentId? parentId)
     {
         Id = id;
         
@@ -38,7 +39,11 @@ public class Department : Entity<DepartmentId>
         
         Path = path;
         
+        Identifier = identifier;
+        
         Depth = depth;
+        
+        ParentId = parentId;
     }
     
     public DepartmentId Id { get; private set; }
@@ -47,9 +52,9 @@ public class Department : Entity<DepartmentId>
     
     public int Depth { get; private set; }
     
-    public string Identifier { get; private set; } = string.Empty;
+    public Identifier Identifier { get; private set; } 
     
-    public DepartmentId ParentId { get; private set; }
+    public DepartmentId? ParentId { get; private set; }
     
     public Path Path  { get; private set; }
     
@@ -79,7 +84,8 @@ public class Department : Entity<DepartmentId>
             name,
             identifier,            
             path,
-            0
+            0,
+            null
         );
     }
 
@@ -92,7 +98,15 @@ public class Department : Entity<DepartmentId>
         
         var path = parent.Path.CreateChild(identifier);
         
-        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), name, identifier, path, parent.Depth + 1);
+        parent.ChildrenCount += 1;
+        
+        return new Department(departmentId ?? new DepartmentId(
+            Guid.NewGuid()),
+            name, 
+            identifier, 
+            path,
+            parent.Depth + 1, 
+            parent.Id);
     }
     
     public UnitResult<Error> AddDepartmentLocations(List<DepartmentLocation> departmentLocations)

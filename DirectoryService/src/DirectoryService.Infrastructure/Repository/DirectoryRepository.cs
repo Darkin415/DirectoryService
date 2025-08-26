@@ -21,29 +21,42 @@ public class DirectoryRepository : IDirectoryRepository
         _dbContext = dbContext;
         _dbConnection = dbConnection;
     }
+    
+    public async Task<Result<List<Department>, Error>> GetDepartmentsById(
+        List<DepartmentId> departmentIds,
+        CancellationToken cancellationToken)
+    {
+        var distinctDepartments = departmentIds.Distinct().ToList();
 
-    public async Task<Result<Guid, ErrorList>> AddLocation(Location location, CancellationToken cancellationToken)
+        var departments = await _dbContext.Departments
+            .Where(l => distinctDepartments.Contains(l.Id))
+            .ToListAsync(cancellationToken);
+
+        if (distinctDepartments.Count != departments.Count)
+            return Errors.General.LocationNotFound("");
+
+        return departments;
+    }
+    
+    public async Task<Result<Guid, ErrorList>> AddDepartment(Department department, CancellationToken cancellationToken)
     {
         try
         {
-            await _dbContext.Locations.AddAsync(location, cancellationToken);
+            await _dbContext.Departments.AddAsync(department, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-
-            return location.Id.Value;
+        
+            return department.Id.Value;
         }
+        
         catch (Exception ex)
         {
             return Errors.General.ValueIsInvalid().ToErrorList();
         }
     }
-    
-    public async Task<bool> AllLocationsExistAsync(List<Guid> locationIds, CancellationToken cancellationToken)
-    {
-        var idsList = locationIds.ToList();
-        var count = await _dbContext.Locations
-            .CountAsync(x => idsList.Contains(x.Id.Value), cancellationToken);
 
-        return count == idsList.Count;
+    public async Task<bool> IsIdentifierExistAsync(string identifier, CancellationToken cancellationToken)
+    {
+        return  await _dbContext.Departments.AnyAsync(d => d.Identifier.Value == identifier);
     }
 
     public Task<bool> AddressExistsAsync(Address address, CancellationToken cancellationToken)
