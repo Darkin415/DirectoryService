@@ -19,6 +19,8 @@ public interface IDirectoryRepository
     Task<bool> LocationNameExist(LocationName name, CancellationToken cancellationToken);
     
     Task<bool> AddressExistsAsync(Address address, CancellationToken cancellationToken);
+
+    Task<UnitResult<Error>> SaveChangesAsync(CancellationToken cancellationToken);
     
     Task<Result<Domain.Entities.Department, Error>> GetDepartmentById(DepartmentId departmentId, CancellationToken cancellationToken);
 }

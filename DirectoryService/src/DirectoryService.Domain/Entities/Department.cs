@@ -114,4 +114,13 @@ public class Department : Entity<DepartmentId>
         _departmentLocations.AddRange(departmentLocations);
         return UnitResult.Success<Error>();
     }
+    
+    public UnitResult<Error> UpdateDepartmentLocations(List<DepartmentLocation> newDepartmentLocations)
+    {
+        _departmentLocations.Clear();
+        
+        _departmentLocations.AddRange(newDepartmentLocations);
+        
+        return UnitResult.Success<Error>();
+    }
 }

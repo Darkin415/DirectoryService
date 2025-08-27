@@ -69,7 +69,20 @@ public class DirectoryRepository : IDirectoryRepository
                 l.Address.RoomNumber == address.RoomNumber,
             cancellationToken);
     }
-    
+
+    public async Task<UnitResult<Error>> SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return UnitResult.Success<Error>();
+        }
+        catch (Exception ex)
+        {
+            return Errors.General.ValueIsInvalid();
+        }
+    }
+
     public async Task<Result<Department, Error>> GetDepartmentById(DepartmentId departmentId,
         CancellationToken cancellationToken)
     {

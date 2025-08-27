@@ -1,5 +1,6 @@
 ﻿using DirectoryService.Application.Department;
 using DirectoryService.Application.Location.AddLocation;
+using DirectoryService.Application.Location.UpdateLocation;
 using DirectoryService.Application.Position;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,5 +13,6 @@ public static class DependencyInjection
         services.AddScoped<AddLocationsHandler>();
         services.AddScoped<CreateDepartmentHandler>();
         services.AddScoped<AddPositionHandler>();
+        services.AddScoped<UpdateLocationHandler>();
     }
 }
