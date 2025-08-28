@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Application.Database;
 using DirectoryService.Application.Interfaces;
 using DirectoryService.Contacts.Errors;
 using DirectoryService.Contacts.Validation;
@@ -12,6 +13,7 @@ namespace DirectoryService.Application.Location.UpdateLocation;
 
 public class UpdateLocationHandler
 {
+    private readonly ITransactionManager _transactionManager;
     private readonly IValidator<UpdateLocationCommand> _validator;
     private readonly ILogger<UpdateLocationHandler> _logger;
     private readonly ILocationRepository _locationRepository;
@@ -20,12 +22,15 @@ public class UpdateLocationHandler
     public UpdateLocationHandler(
         IValidator<UpdateLocationCommand> validator, 
         ILogger<UpdateLocationHandler> logger, 
-        ILocationRepository locationRepository, IDirectoryRepository directoryRepository)
+        ILocationRepository locationRepository, 
+        IDirectoryRepository directoryRepository, 
+        ITransactionManager transactionManager)
     {
         _validator = validator;
         _logger = logger;
         _locationRepository = locationRepository;
         _directoryRepository = directoryRepository;
+        _transactionManager = transactionManager;
     }
 
     public async Task<Result<Guid, ErrorList>> Handle(UpdateLocationCommand command, CancellationToken cancellationToken)
@@ -36,29 +41,52 @@ public class UpdateLocationHandler
         
         var departmentId = DepartmentId.Create(command.DepartmentId);
         
-        var departmentLocationsResult = MapToDepartmentLocations(departmentId.Value, command.LocationIds).Value;
-        
         var department = await _directoryRepository.GetDepartmentById(departmentId.Value, cancellationToken);
-
-        var result = department.Value.UpdateDepartmentLocations(departmentLocationsResult);
-
-        await _directoryRepository.SaveChangesAsync(cancellationToken);
-
-        return department.Value.Id.Value;
-
-    }
-
-    public Result<List<DepartmentLocation>, Error> MapToDepartmentLocations(DepartmentId departmentId,
-        List<Guid> locationIds)
-    {
-        var departmentLocationsResult = locationIds
+        if(department.IsFailure)
+            return department.Error.ToErrorList();
+        
+        //создаю локации для проверки
+        var locationIdResults = command.LocationIds
             .Distinct()
-            .Select(locationId => DepartmentLocation.Create(new LocationId(locationId), departmentId))
+            .Select(LocationId.Create) 
             .ToList();
         
-        var departmentLocations = departmentLocationsResult.Select(r => r.Value).ToList();
+        var locationIds = locationIdResults
+            .Select(r => r.Value)
+            .ToList();
+        // проверка локаций на существование
+        var locationsResult = await _locationRepository
+            .GetLocationsById(locationIds, cancellationToken);
+        if(locationsResult.IsFailure)
+            return locationsResult.Error.ToErrorList();
         
-        return departmentLocations;
+        // создаю departmentLocations
+        var departmentLocations = command.LocationIds
+            .Select(locationId => new DepartmentLocation(LocationId.Create(locationId).Value, department.Value.Id))
+            .ToList();
+        
+        var transactionResult = await _transactionManager
+            .BeginTransactionAsync(cancellationToken);
+        if (transactionResult.IsFailure)
+        {
+            _logger.LogError(transactionResult.Error.Message);
+            return transactionResult.Error.ToErrorList();
+        }
+
+        using var transaction = transactionResult.Value;
+        
+        var result = department.Value.UpdateDepartmentLocations(departmentLocations);
+        
+        var saveChangesResult = await _transactionManager
+            .SaveChangesAsync(cancellationToken);
+        
+        var commitResult = transaction.Commit();
+        if (commitResult.IsFailure)
+        {
+            _logger.LogError(commitResult.Error.Message);
+            return commitResult.Error.ToErrorList();
+        }
+        
+        return department.Value.Id.Value;
     }
-    
 }

@@ -19,10 +19,11 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .HasConversion(
                 value => value.Value,
                 value => DepartmentId.Create(value).Value);
-        
+
         builder.HasMany(d => d.DepartmentLocations)
             .WithOne(dl => dl.Department)
             .HasForeignKey(dl => dl.DepartmentId);
+            
 
         builder.Property(d => d.Depth)
             .IsRequired()
