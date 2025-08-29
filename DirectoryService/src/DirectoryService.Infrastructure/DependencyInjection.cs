@@ -1,5 +1,7 @@
 ﻿using System.Data;
+using DirectoryService.Application.Database;
 using DirectoryService.Application.Interfaces;
+using DirectoryService.Infrastructure.Database;
 using DirectoryService.Infrastructure.Options;
 using DirectoryService.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +22,8 @@ public static class DependencyInjection
         services.AddScoped<IPositionRepository, PositionRepository>();
         
         services.AddScoped<ILocationRepository, LocationRepository>();
+        
+        services.AddScoped<ITransactionManager, TransactionManager>();
 
         // Подключение для Dapper
         services.AddScoped<IDbConnection>(sp =>
