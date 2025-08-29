@@ -87,6 +87,7 @@ public class DirectoryRepository : IDirectoryRepository
         CancellationToken cancellationToken)
     {
         var department = await _dbContext.Departments
+            .Include(x => x.DepartmentLocations)
             .FirstOrDefaultAsync(x => x.Id == departmentId, cancellationToken);
 
         if (department == null)
