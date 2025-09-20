@@ -2,6 +2,7 @@
 using DirectoryService.Domain.ValueObjects.DepartmentVO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Path = DirectoryService.Domain.ValueObjects.DepartmentVO.Path;
 
 namespace DirectoryService.Infrastructure.Configuration;
 
@@ -45,30 +46,27 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .HasForeignKey(d => d.ParentId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.ComplexProperty(d => d.Name, nb =>
+        builder.OwnsOne(d => d.Name, nb =>
         {
             nb.Property(nb => nb.Value)
                 .HasColumnName("department_name");
         });
 
-        builder.ComplexProperty(d => d.Identifier, db =>
+        builder.OwnsOne(d => d.Identifier, id =>
         {
-            db.Property(d => d.Value)
+            id.Property(x => x.Value)
                 .HasColumnName("department_identifier");
         });
         
-        // builder.Property(x => x.ParentId)
-        //     .IsRequired(false)
-        //     .HasConversion(
-        //         value => value == null ? (Guid?)null : value.Value,
-        //         value => value == null ? null : DepartmentId.Create((Guid)value).Value);
-
-        builder.ComplexProperty(d => d.Path, db =>
-        {
-            db.Property(db => db.Value)
-                .IsRequired()
-                .HasColumnName("department_path");
-        });
+        builder.Property(d => d.Path)
+            .HasColumnName("path")
+            .HasColumnType("ltree")
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => Path.Create(value).Value);
+        
+        builder.HasIndex(x => x.Path).HasMethod("gist").HasDatabaseName("idx_departments_path");
         
         builder.Property(d => d.ChildrenCount)
             .IsRequired()

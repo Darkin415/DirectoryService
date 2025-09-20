@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Contacts.Errors;
+using DirectoryService.Contracts.Errors;
 using DirectoryService.Domain.ValueObjects;
 using DirectoryService.Domain.ValueObjects.DepartmentVO;
 using Path = DirectoryService.Domain.ValueObjects.DepartmentVO.Path;
@@ -107,6 +107,26 @@ public class Department : Entity<DepartmentId>
             path,
             parent.Depth + 1, 
             parent.Id);
+    }
+
+    public UnitResult<Error> SetParent(Department parent)
+    {
+        if (parent == this)
+            return Error.Conflict("self.department", "Can not set yourself");
+
+        var newPath = Path.CalculateNewPath(parent.Path, Identifier.Value);
+        if (newPath.IsFailure)
+            return newPath.Error;
+
+        int newDepth = 1;
+        if (parent != null)
+            newDepth = parent.Depth + 1;
+
+        ParentId = parent?.Id;
+        Depth = newDepth;
+        Path = newPath.Value;
+        
+        return UnitResult.Success<Error>();
     }
     
     public UnitResult<Error> AddDepartmentLocations(List<DepartmentLocation> departmentLocations)

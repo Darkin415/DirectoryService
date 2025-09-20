@@ -4,6 +4,7 @@ using DirectoryService.Application.Interfaces;
 using DirectoryService.Infrastructure.Database;
 using DirectoryService.Infrastructure.Options;
 using DirectoryService.Infrastructure.Repository;
+using DirectoryService.Infrastructure.Sql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,11 +18,13 @@ public static class DependencyInjection
     {
         services.AddDatabase(configuration);
 
-        services.AddScoped<IDirectoryRepository, DirectoryRepository>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         
         services.AddScoped<IPositionRepository, PositionRepository>();
         
         services.AddScoped<ILocationRepository, LocationRepository>();
+        
+        services.AddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
         
         services.AddScoped<ITransactionManager, TransactionManager>();
 

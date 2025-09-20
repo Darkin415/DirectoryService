@@ -1,11 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Contacts.Errors;
+using DirectoryService.Contracts.Errors;
 
 namespace DirectoryService.Application.Database;
 
 public interface ITransactionScope : IDisposable
 {
-    public UnitResult<Error> Commit();
-
-    public UnitResult<Error> Rollback();
+    UnitResult<Error> Commit(CancellationToken cancellationToken);
+    UnitResult<Error> Rollback(CancellationToken cancellationToken);
 }

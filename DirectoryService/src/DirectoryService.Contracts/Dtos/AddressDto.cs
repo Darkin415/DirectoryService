@@ -1,4 +1,4 @@
-﻿namespace DirectoryService.Contacts.Dtos;
+﻿namespace DirectoryService.Contracts.Dtos;
 
 public class AddressDto
 {

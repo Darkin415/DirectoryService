@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Contacts.Errors;
+using DirectoryService.Contracts.Errors;
 using DirectoryService.Domain.ValueObjects;
 using DirectoryService.Domain.ValueObjects.PositionVO;
 

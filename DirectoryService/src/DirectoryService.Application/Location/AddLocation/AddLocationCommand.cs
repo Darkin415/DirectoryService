@@ -1,4 +1,4 @@
-﻿using DirectoryService.Contacts.Dtos;
+﻿using DirectoryService.Contracts.Dtos;
 
 namespace DirectoryService.Application.Location.AddLocation;
 

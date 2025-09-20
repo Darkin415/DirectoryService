@@ -1,4 +1,4 @@
-﻿using DirectoryService.Contacts.Requests;
+﻿using DirectoryService.Contracts.Requests;
 
 namespace DirectoryService.Application.Department;
 

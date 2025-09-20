@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Interfaces;
-using DirectoryService.Contacts.Errors;
-using DirectoryService.Contacts.Validation;
+using DirectoryService.Contracts.Errors;
+using DirectoryService.Contracts.Validation;
 using DirectoryService.Domain.Entities;
 using DirectoryService.Domain.ValueObjects.DepartmentVO;
 using DirectoryService.Domain.ValueObjects.PositionVO;
@@ -11,12 +11,12 @@ namespace DirectoryService.Application.Position;
 
 public class AddPositionHandler
 {
-   private readonly IDirectoryRepository  _repository;
+   private readonly IDepartmentRepository  _repository;
    private readonly IValidator<AddPositionCommand> _validator;
    private readonly IPositionRepository _positionRepository;
    
     public AddPositionHandler(
-        IDirectoryRepository repository, 
+        IDepartmentRepository repository, 
         IValidator<AddPositionCommand> validator, 
         IPositionRepository positionRepository)
     {

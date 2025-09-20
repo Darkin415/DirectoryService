@@ -1,4 +1,4 @@
-﻿namespace DirectoryService.Contacts.Errors;
+﻿namespace DirectoryService.Contracts.Errors;
 
 public static class Errors
 {
@@ -14,6 +14,11 @@ public static class Errors
         {
             var label = name ?? "value";
             return Error.Validation("record.already.exist", $"{label} already exist");
+        }
+        
+        public static Error ItsChild(string? name = null)
+        {
+            return Error.Validation("element.is.child", $" Element is child");
         }
 
         public static Error NameNotFound(string name)

@@ -1,4 +1,4 @@
-﻿namespace DirectoryService.Contacts.Errors;
+﻿namespace DirectoryService.Contracts.Errors;
 
 public class Error
 {
