@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Interfaces;
-using DirectoryService.Contacts.Errors;
-using DirectoryService.Contacts.Validation;
+using DirectoryService.Contracts.Errors;
+using DirectoryService.Contracts.Validation;
 using DirectoryService.Domain.ValueObjects.LocationVO;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -11,18 +11,18 @@ namespace DirectoryService.Application.Location.AddLocation;
 
 public class AddLocationsHandler
 {
-    private readonly IDirectoryRepository _directoryRepository;
+    private readonly IDepartmentRepository _departmentRepository;
     private readonly ILocationRepository _locationRepository;
     private readonly ILogger<AddLocationsHandler> _logger;
     private readonly IValidator<AddLocationCommand> _validator;
 
     public AddLocationsHandler(
-        IDirectoryRepository directoryRepository, 
+        IDepartmentRepository departmentRepository, 
         ILogger<AddLocationsHandler> logger, 
         IValidator<AddLocationCommand> validator, 
         ILocationRepository locationRepository)
     {
-        _directoryRepository = directoryRepository;
+        _departmentRepository = departmentRepository;
         _logger = logger;
         _validator = validator;
         _locationRepository = locationRepository;
@@ -37,7 +37,7 @@ public class AddLocationsHandler
         if (name.IsFailure)
             return name.Error.ToErrorList();
         
-        var nameResult = await _directoryRepository.LocationNameExist(name.Value, cancellationToken);
+        var nameResult = await _departmentRepository.LocationNameExist(name.Value, cancellationToken);
         if(nameResult)
             return Errors.General.AlreadyExist("Location").ToErrorList();
         
@@ -54,7 +54,7 @@ public class AddLocationsHandler
         if(address.IsFailure)
             return address.Error.ToErrorList();
 
-        var addressExist = await _directoryRepository.AddressExistsAsync(address.Value, cancellationToken);
+        var addressExist = await _departmentRepository.AddressExistsAsync(address.Value, cancellationToken);
         if(addressExist)
             return Errors.General.AlreadyExist("Address").ToErrorList();
         

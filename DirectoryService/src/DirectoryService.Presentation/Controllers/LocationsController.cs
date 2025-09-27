@@ -1,6 +1,6 @@
 using DirectoryService.Application.Location.AddLocation;
 using DirectoryService.Application.Location.UpdateLocation;
-using DirectoryService.Contacts.Requests;
+using DirectoryService.Contracts.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DirectoryService.Presentation.Controllers;

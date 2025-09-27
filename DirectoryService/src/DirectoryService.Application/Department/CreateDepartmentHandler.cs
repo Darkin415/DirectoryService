@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Interfaces;
-using DirectoryService.Contacts.Errors;
-using DirectoryService.Contacts.Validation;
+using DirectoryService.Contracts.Errors;
+using DirectoryService.Contracts.Validation;
 using DirectoryService.Domain.Entities;
 using DirectoryService.Domain.ValueObjects.DepartmentVO;
 using DirectoryService.Domain.ValueObjects.LocationVO;
@@ -14,18 +14,18 @@ public class CreateDepartmentHandler
 {
     private readonly IValidator<CreateDepartmentCommand> _validator;
     private readonly ILogger<CreateDepartmentHandler> _logger;
-    private readonly IDirectoryRepository _directoryRepository;
+    private readonly IDepartmentRepository _departmentRepository;
     private readonly ILocationRepository _locationRepository;
 
     public CreateDepartmentHandler(
         ILogger<CreateDepartmentHandler> logger,
         IValidator<CreateDepartmentCommand> validator, 
-        IDirectoryRepository directoryRepository, 
+        IDepartmentRepository departmentRepository, 
         ILocationRepository locationRepository)
     {
         _logger = logger;
         _validator = validator;
-        _directoryRepository = directoryRepository;
+        _departmentRepository = departmentRepository;
         _locationRepository = locationRepository;
     }
 
@@ -44,7 +44,7 @@ public class CreateDepartmentHandler
             .ToList();
         
         var isIdentifierExist = 
-            await _directoryRepository.IsIdentifierExistAsync(command.Identifier, cancellationToken);
+            await _departmentRepository.IsIdentifierExistAsync(command.Identifier, cancellationToken);
         if(isIdentifierExist)
             return Errors.General.AlreadyExist("Identifier").ToErrorList();
         
@@ -70,10 +70,9 @@ public class CreateDepartmentHandler
             createDepartmentResult = Domain.Entities.Department.CreateParent(name.Value, identifier.Value, null);
         else
         {
-            
             var departmentId = DepartmentId.Create(parentId.Value);
 
-            var parent = await _directoryRepository.GetDepartmentById(departmentId.Value, cancellationToken);
+            var parent = await _departmentRepository.GetDepartmentById(departmentId.Value, cancellationToken);
             if (parent.IsFailure)
                 return parent.Error.ToErrorList();
             
@@ -96,7 +95,7 @@ public class CreateDepartmentHandler
         if(addLocations.IsFailure)
             return addLocations.Error.ToErrorList();
         
-        var departmentResult =  await _directoryRepository.AddDepartment(department, cancellationToken);
+        var departmentResult =  await _departmentRepository.AddDepartment(department, cancellationToken);
         if (departmentResult.IsFailure)
             return departmentResult.Error;
         

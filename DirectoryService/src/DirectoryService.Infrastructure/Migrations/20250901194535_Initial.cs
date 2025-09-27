@@ -14,21 +14,24 @@ namespace DirectoryService.Infrastructure.Migrations
             migrationBuilder.EnsureSchema(
                 name: "department");
 
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:ltree", ",,");
+
             migrationBuilder.CreateTable(
                 name: "departments",
                 schema: "department",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    department_name = table.Column<string>(type: "text", nullable: false),
                     depth = table.Column<int>(type: "integer", nullable: false),
+                    department_identifier = table.Column<string>(type: "text", nullable: false),
                     parentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    path = table.Column<string>(type: "ltree", nullable: false),
                     children_count = table.Column<int>(type: "integer", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    department_identifier = table.Column<string>(type: "text", nullable: false),
-                    department_name = table.Column<string>(type: "text", nullable: false),
-                    department_path = table.Column<string>(type: "text", nullable: false)
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -160,6 +163,13 @@ namespace DirectoryService.Infrastructure.Migrations
                 schema: "department",
                 table: "department_position",
                 columns: new[] { "DepartmentPositionPositionId", "DepartmentPositionDepartmentId" });
+
+            migrationBuilder.CreateIndex(
+                name: "idx_departments_path",
+                schema: "department",
+                table: "departments",
+                column: "path")
+                .Annotation("Npgsql:IndexMethod", "gist");
 
             migrationBuilder.CreateIndex(
                 name: "IX_departments_parentId",

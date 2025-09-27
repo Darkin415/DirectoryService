@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DirectoryService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250829073750_Initial")]
+    [Migration("20250901194535_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,6 +24,7 @@ namespace DirectoryService.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "ltree");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("DirectoryService.Domain.Entities.Department", b =>
@@ -52,43 +53,23 @@ namespace DirectoryService.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("parentId");
 
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("ltree")
+                        .HasColumnName("path");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Identifier", "DirectoryService.Domain.Entities.Department.Identifier#Identifier", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("department_identifier");
-                        });
-
-                    b.ComplexProperty<Dictionary<string, object>>("Name", "DirectoryService.Domain.Entities.Department.Name#DepartmentName", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("department_name");
-                        });
-
-                    b.ComplexProperty<Dictionary<string, object>>("Path", "DirectoryService.Domain.Entities.Department.Path#Path", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("department_path");
-                        });
-
                     b.HasKey("Id");
 
                     b.HasIndex("ParentId");
+
+                    b.HasIndex("Path")
+                        .HasDatabaseName("idx_departments_path");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Path"), "gist");
 
                     b.ToTable("departments", "department");
                 });
@@ -258,6 +239,48 @@ namespace DirectoryService.Infrastructure.Migrations
                         .WithMany("ChildrenDepartments")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.OwnsOne("DirectoryService.Domain.ValueObjects.DepartmentVO.DepartmentName", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("DepartmentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("department_name");
+
+                            b1.HasKey("DepartmentId");
+
+                            b1.ToTable("departments", "department");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DepartmentId");
+                        });
+
+                    b.OwnsOne("DirectoryService.Domain.ValueObjects.DepartmentVO.Identifier", "Identifier", b1 =>
+                        {
+                            b1.Property<Guid>("DepartmentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("department_identifier");
+
+                            b1.HasKey("DepartmentId");
+
+                            b1.ToTable("departments", "department");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DepartmentId");
+                        });
+
+                    b.Navigation("Identifier")
+                        .IsRequired();
+
+                    b.Navigation("Name")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DirectoryService.Domain.Entities.DepartmentLocation", b =>

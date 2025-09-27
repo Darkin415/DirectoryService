@@ -1,58 +1,51 @@
 ﻿using System.Data;
 using CSharpFunctionalExtensions;
 using DirectoryService.Application.Database;
-using DirectoryService.Contacts.Errors;
+using DirectoryService.Contracts.Errors;
 using Microsoft.Extensions.Logging;
 
 namespace DirectoryService.Infrastructure.Database;
 
-public class TransactionScope : ITransactionScope
+public class TransactionScope : ITransactionScope, IDisposable
 {
-    private readonly IDbTransaction _transaction;
+    private readonly IDbTransaction _dbTransaction;
     private readonly ILogger<TransactionScope> _logger;
-
-    public TransactionScope(
-        IDbTransaction transaction,
-        ILogger<TransactionScope> logger)
+    public TransactionScope(IDbTransaction dbTransaction, ILogger<TransactionScope> logger)
     {
-        _transaction = transaction;
+        _dbTransaction = dbTransaction;
         _logger = logger;
     }
 
-    public UnitResult<Error> Commit()
+    public UnitResult<Error> Commit(CancellationToken cancellationToken)
     {
         try
         {
-            _transaction.Commit();
+            _dbTransaction.Commit();
             return UnitResult.Success<Error>();
         }
         catch (Exception ex)
         {
-            _logger.LogError(
-                ex, "Failed to commit transaction");
-            return Error.Failure(
-                "database", "Failed to commit transaction: " + ex.Message);
+            _logger.LogError(ex, "Error while committing transaction");
+            return Error.Failure("commit.error", "Commit error");
         }
     }
 
-    public UnitResult<Error> Rollback()
+    public UnitResult<Error> Rollback(CancellationToken cancellationToken)
     {
         try
         {
-            _transaction.Rollback();
+            _dbTransaction.Rollback();
             return UnitResult.Success<Error>();
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            _logger.LogError(
-                ex, "Failed to rollback transaction");
-            return Error.Failure(
-                "database", "Failed to rollback transaction: " + ex.Message);
+            _logger.LogError(e, "Error while rolling back transaction");
+            return Error.Conflict("rollback.error", "Rollback error");
         }
     }
 
     public void Dispose()
     {
-        _transaction.Dispose();
+        _dbTransaction.Dispose();
     }
 }

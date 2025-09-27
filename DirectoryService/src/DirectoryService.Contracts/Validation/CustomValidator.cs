@@ -1,9 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
-using DirectoryService.Contacts.Errors;
+using DirectoryService.Contracts.Errors;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace DirectoryService.Contacts.Validation;
+namespace DirectoryService.Contracts.Validation;
 
 public static class CustomValidator
 {

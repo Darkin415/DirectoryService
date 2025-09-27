@@ -1,13 +1,11 @@
-﻿using CSharpFunctionalExtensions;
-using DirectoryService.Contacts.Errors;
+﻿using System.Data;
+using CSharpFunctionalExtensions;
+using DirectoryService.Contracts.Errors;
 
 namespace DirectoryService.Application.Database;
 
 public interface ITransactionManager
 {
-    Task<Result<ITransactionScope, Error>>
-        BeginTransactionAsync(CancellationToken cancellationToken);
-
-    Task<UnitResult<Error>> SaveChangesAsync(
-        CancellationToken cancellationToken = default);
+    public Task<Result<ITransactionScope, Error>> BeginTransactionAsync(CancellationToken cancellationToken);
+    public Task<UnitResult<Error>> SaveChangesAsync(CancellationToken cancellationToken);
 }

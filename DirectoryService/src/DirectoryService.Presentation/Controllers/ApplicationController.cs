@@ -1,4 +1,4 @@
-﻿using DirectoryService.Contacts;
+﻿using DirectoryService.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DirectoryService.Presentation.Controllers;

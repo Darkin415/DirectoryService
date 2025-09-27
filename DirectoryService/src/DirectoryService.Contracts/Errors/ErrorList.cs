@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace DirectoryService.Contacts.Errors;
+namespace DirectoryService.Contracts.Errors;
 
 public class ErrorList : IEnumerable<Error>
 {

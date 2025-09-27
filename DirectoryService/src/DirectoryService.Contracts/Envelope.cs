@@ -1,6 +1,6 @@
-﻿using DirectoryService.Contacts.Errors;
+﻿using DirectoryService.Contracts.Errors;
 
-namespace DirectoryService.Contacts;
+namespace DirectoryService.Contracts;
 
 public class Envelope
 {

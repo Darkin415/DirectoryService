@@ -1,8 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Database;
 using DirectoryService.Application.Interfaces;
-using DirectoryService.Contacts.Errors;
-using DirectoryService.Contacts.Validation;
+using DirectoryService.Contracts.Errors;
+using DirectoryService.Contracts.Validation;
 using DirectoryService.Domain.Entities;
 using DirectoryService.Domain.ValueObjects.DepartmentVO;
 using DirectoryService.Domain.ValueObjects.LocationVO;
@@ -17,19 +17,19 @@ public class UpdateLocationHandler
     private readonly IValidator<UpdateLocationCommand> _validator;
     private readonly ILogger<UpdateLocationHandler> _logger;
     private readonly ILocationRepository _locationRepository;
-    private readonly IDirectoryRepository _directoryRepository;
+    private readonly IDepartmentRepository _departmentRepository;
     
     public UpdateLocationHandler(
         IValidator<UpdateLocationCommand> validator, 
         ILogger<UpdateLocationHandler> logger, 
         ILocationRepository locationRepository, 
-        IDirectoryRepository directoryRepository, 
+        IDepartmentRepository departmentRepository, 
         ITransactionManager transactionManager)
     {
         _validator = validator;
         _logger = logger;
         _locationRepository = locationRepository;
-        _directoryRepository = directoryRepository;
+        _departmentRepository = departmentRepository;
         _transactionManager = transactionManager;
     }
 
@@ -41,7 +41,7 @@ public class UpdateLocationHandler
         
         var departmentId = DepartmentId.Create(command.DepartmentId);
         
-        var department = await _directoryRepository.GetDepartmentById(departmentId.Value, cancellationToken);
+        var department = await _departmentRepository.GetDepartmentById(departmentId.Value, cancellationToken);
         if(department.IsFailure)
             return department.Error.ToErrorList();
         
@@ -72,15 +72,15 @@ public class UpdateLocationHandler
             _logger.LogError(transactionResult.Error.Message);
             return transactionResult.Error.ToErrorList();
         }
-
-        using var transaction = transactionResult.Value;
+        
+        var transaction = transactionResult.Value;
         
         var result = department.Value.UpdateDepartmentLocations(departmentLocations);
         
         var saveChangesResult = await _transactionManager
             .SaveChangesAsync(cancellationToken);
         
-        var commitResult = transaction.Commit();
+        var commitResult = transaction.Commit(cancellationToken);
         if (commitResult.IsFailure)
         {
             _logger.LogError(commitResult.Error.Message);

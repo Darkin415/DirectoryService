@@ -1,4 +1,4 @@
-﻿using DirectoryService.Contacts.Validation;
+﻿using DirectoryService.Contracts.Validation;
 using DirectoryService.Domain.ValueObjects.LocationVO;
 using FluentValidation;
 using TimeZone = DirectoryService.Domain.ValueObjects.LocationVO.TimeZone;

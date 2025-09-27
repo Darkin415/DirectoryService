@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using CSharpFunctionalExtensions;
 using DirectoryService.Application.Interfaces;
-using DirectoryService.Contacts.Errors;
+using DirectoryService.Contracts.Errors;
 using DirectoryService.Domain.Entities;
 using DirectoryService.Domain.ValueObjects.LocationVO;
 using Microsoft.EntityFrameworkCore;

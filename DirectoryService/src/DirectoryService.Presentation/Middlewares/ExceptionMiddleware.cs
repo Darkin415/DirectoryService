@@ -1,5 +1,5 @@
-﻿using DirectoryService.Contacts;
-using DirectoryService.Contacts.Errors;
+﻿using DirectoryService.Contracts;
+using DirectoryService.Contracts.Errors;
 
 namespace DirectoryService.Presentation.Middlewares;
 
