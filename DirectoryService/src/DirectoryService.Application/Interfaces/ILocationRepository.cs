@@ -11,4 +11,5 @@ public interface ILocationRepository
         CancellationToken cancellationToken);
 
     Task<Result<Guid, ErrorList>> AddLocation(Domain.Entities.Location location, CancellationToken cancellationToken);
+    
 }

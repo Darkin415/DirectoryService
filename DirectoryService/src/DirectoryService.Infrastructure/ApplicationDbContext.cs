@@ -1,11 +1,12 @@
-﻿using DirectoryService.Domain.Entities;
+﻿using DirectoryService.Application.Database;
+using DirectoryService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace DirectoryService.Infrastructure;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext, IReadApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -17,6 +18,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Position> Positions => Set<Position>();
     
     public DbSet<Location> Locations => Set<Location>();
+    
+    public IQueryable<Location> ReadLocations => Set<Location>().AsQueryable().AsNoTracking();
     
     private const string DATABASE = "Database";
     

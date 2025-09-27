@@ -34,7 +34,7 @@ public class DepartmentRepository : IDepartmentRepository
             .ToListAsync(cancellationToken);
 
         if (distinctDepartments.Count != departments.Count)
-            return Errors.General.LocationNotFound("");
+            return Errors.General.NotFound();
 
         return departments;
     }

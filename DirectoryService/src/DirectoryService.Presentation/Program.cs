@@ -1,4 +1,5 @@
 using DirectoryService.Application;
+using DirectoryService.Application.Database;
 using DirectoryService.Application.Location.AddLocation;
 using DirectoryService.Infrastructure;
 using DirectoryService.Presentation.Middlewares;
