@@ -33,6 +33,7 @@ public class LocationRepository : ILocationRepository
             return Errors.General.ValueIsInvalid().ToErrorList();
         }
     }
+    
     public async Task<Result<List<Location>, Error>> GetLocationsById(
         List<LocationId> locationsIds,
         CancellationToken cancellationToken)

@@ -1,6 +1,8 @@
 using DirectoryService.Application.Location.AddLocation;
+using DirectoryService.Application.Location.GetLocationWithPagination;
 using DirectoryService.Application.Location.UpdateLocation;
 using DirectoryService.Contracts.Requests;
+using DirectoryService.Domain.ValueObjects.LocationVO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DirectoryService.Presentation.Controllers;
@@ -22,6 +24,18 @@ public class LocationsController : ApplicationController
            return BadRequest(result.Error);
 
        return Ok(result.Value);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<GetLocationDto>> GetAllLocations(
+        [FromQuery] GetLocationWithPaginationRequest request,
+        
+        [FromServices] GetLocationWIthPaginationHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var locations = await handler.Handle(request, cancellationToken);
+        
+        return Ok(locations);
     }
 
 

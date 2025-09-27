@@ -70,6 +70,7 @@ public class CreateDepartmentHandler
             createDepartmentResult = Domain.Entities.Department.CreateParent(name.Value, identifier.Value, null);
         else
         {
+            
             var departmentId = DepartmentId.Create(parentId.Value);
 
             var parent = await _departmentRepository.GetDepartmentById(departmentId.Value, cancellationToken);

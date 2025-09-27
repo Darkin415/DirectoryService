@@ -20,4 +20,6 @@ public class DepartmentDto
     public DateTime UpdatedAt { get; set; }
 
     public List<DepartmentDto> Children { get; set; } = [];
+    
+    public bool HasMoreChildren { get; init; }
 }
