@@ -72,6 +72,9 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .IsRequired()
             .HasColumnName("children_count");
         
+        builder.Property(d => d.DeletedAt)
+            .HasColumnName("deleted_at");
+        
         builder.Property(d => d.IsActive)
             .IsRequired()
             .HasColumnName("is_active");
