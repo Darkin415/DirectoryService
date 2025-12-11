@@ -18,6 +18,12 @@ public class Path : ValueObject
         return new Path(identifier.Value);
     }
 
+    public static Path CreateDeleted(string oldIdentifier, Path path)
+    {
+        var newPath = path.Value.Replace(oldIdentifier, $"deleted {oldIdentifier}");
+        return new Path(newPath);
+    }
+
     public Result<Path,Error> CalculateNewPath(Path? newParentPath, string identifier)
     {
         if(newParentPath == null)

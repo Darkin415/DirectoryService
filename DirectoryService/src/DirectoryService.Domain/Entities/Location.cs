@@ -32,6 +32,8 @@ public class Location : Entity<LocationId>
         UpdatedAt = CreatedAt;
         
         Address = address;
+
+        DeletedAt = null;
     }
     
     public LocationName Name {get; private set;}
@@ -45,6 +47,8 @@ public class Location : Entity<LocationId>
     public DateTime CreatedAt {get; private set;}
     
     public DateTime UpdatedAt {get; private set;}
+    
+    public DateTime? DeletedAt { get; private set; }
     
     public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentsLocations;
     

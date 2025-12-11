@@ -44,6 +44,8 @@ public class Department : Entity<DepartmentId>
         Depth = depth;
         
         ParentId = parentId;
+
+        DeletedAt = null;
     }
     
     public DepartmentId Id { get; private set; }
@@ -71,6 +73,8 @@ public class Department : Entity<DepartmentId>
     public DateTime CreatedAt { get; private set; }
     
     public DateTime UpdatedAt { get; private set; }
+    
+    public DateTime? DeletedAt { get; private set; }
 
     public static Result<Department, Error> CreateParent(
         DepartmentName name,
@@ -140,6 +144,56 @@ public class Department : Entity<DepartmentId>
         _departmentLocations.Clear();
         
         _departmentLocations.AddRange(newDepartmentLocations);
+        
+        return UnitResult.Success<Error>();
+    }
+
+    public UnitResult<Error> Deactivate()
+    {
+        IsActive = false;
+        DeletedAt = DateTime.UtcNow;
+
+        var oldIdentifier = Identifier;
+        
+        Identifier = Identifier.CreateDeleted(Identifier);
+        
+        var newPath = Path.CreateDeleted(oldIdentifier.Value, Path);
+        
+        Path = newPath;
+        
+        return UnitResult.Success<Error>();
+    }
+
+    public UnitResult<Error> Activate()
+    {
+        var oldDeletedAt = DeletedAt;
+        
+        var oldIdentifier = Identifier;
+
+        IsActive = true;
+        DeletedAt = null;
+
+        var activeIdentifierResult = Identifier.Create(Identifier.Value.Replace("Deleted", ""));
+        
+        if (activeIdentifierResult.IsFailure)
+        {
+            IsActive = false;
+            DeletedAt = oldDeletedAt;
+            return UnitResult.Failure<Error>(activeIdentifierResult.Error.First()); 
+        }
+        
+        Identifier = activeIdentifierResult.Value;
+        var newPathResult = Path.Create(Path.Value.Replace(oldIdentifier.Value, Identifier.Value));
+        
+        if (newPathResult.IsFailure)
+        {
+            IsActive = false;
+            DeletedAt = oldDeletedAt;
+            Identifier = oldIdentifier;
+            return newPathResult.Error;
+        }
+        
+        Path = newPathResult.Value;
         
         return UnitResult.Success<Error>();
     }

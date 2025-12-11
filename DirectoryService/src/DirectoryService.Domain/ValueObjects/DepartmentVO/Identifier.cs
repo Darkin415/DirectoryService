@@ -33,6 +33,11 @@ public class Identifier : ValueObject
 
         return new Identifier(value);
     }
+
+    public static Identifier CreateDeleted(Identifier identifier)
+    {
+        return new Identifier("deleted" + identifier.Value);
+    }
     protected override IEnumerable<object> GetEqualityComponents()
     {
         throw new NotImplementedException();

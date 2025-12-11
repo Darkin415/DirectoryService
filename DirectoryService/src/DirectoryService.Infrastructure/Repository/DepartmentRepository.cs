@@ -8,6 +8,7 @@ using DirectoryService.Domain.Entities;
 using DirectoryService.Domain.ValueObjects.DepartmentVO;
 using DirectoryService.Domain.ValueObjects.LocationVO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Path = DirectoryService.Domain.ValueObjects.DepartmentVO.Path;
 
 namespace DirectoryService.Infrastructure.Repository;
@@ -16,11 +17,15 @@ public class DepartmentRepository : IDepartmentRepository
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IDbConnection _dbConnection;
+    private readonly ILogger <DepartmentRepository> _logger;
 
-    public DepartmentRepository(ApplicationDbContext dbContext, IDbConnection dbConnection)
+    public DepartmentRepository(ApplicationDbContext dbContext, 
+        IDbConnection dbConnection, 
+        ILogger<DepartmentRepository> logger)
     {
         _dbContext = dbContext;
         _dbConnection = dbConnection;
+        _logger = logger;
     }
 
     public async Task<Result<List<Department>, Error>> GetDepartmentsById(
@@ -62,6 +67,54 @@ public class DepartmentRepository : IDepartmentRepository
         });
 
         return UnitResult.Success<Error>();
+    }
+
+    public async Task<UnitResult<Error>> UpdateChildPath(Department department, string oldPath,
+        CancellationToken cancellationToken)
+    {
+        var connection = _dbContext.Database.GetDbConnection();
+
+        const string dapperSql = """
+                                  Update departments
+                                  SET path = REPLACE(path::text, @oldPath, @newPath)::ltree
+                                  WHERE path <@ @oldPath::ltree;
+                                 """;
+        await connection.ExecuteAsync(dapperSql, new
+        {
+            oldPath = oldPath,
+            newPath = department.Path.Value
+        });
+        
+        return UnitResult.Success<Error>();
+    }
+
+    public async Task<UnitResult<Error>> DeactivateExclusiveDepartmentAsync(
+        Guid departmentId,
+        List<Guid> locationIds,
+        CancellationToken cancellationToken)
+    {
+        var utcNow = DateTime.UtcNow;
+        
+        var query = _dbContext.Locations
+            .Where(l => locationIds.Contains(l.Id.Value))
+            .Where(l => !l.DepartmentLocations
+                .Any(dl => dl.DepartmentId.Value != departmentId && dl.Department!.IsActive));
+
+        try
+        {
+            var updated = await query.ExecuteUpdateAsync(s => s
+                    .SetProperty(l => l.IsActive, false)
+                    .SetProperty(l => l.DeletedAt, utcNow),
+                cancellationToken);
+
+            return UnitResult.Success<Error>();
+        }
+
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error while deactivating locations");
+            return Errors.General.ValueIsInvalid();
+        }
     }
 
     public async Task<UnitResult<Error>> LockDescendants(
@@ -162,7 +215,7 @@ public class DepartmentRepository : IDepartmentRepository
     {
         var department = await _dbContext.Departments
             .Include(x => x.DepartmentLocations)
-            .FirstOrDefaultAsync(x => x.Id == departmentId, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == departmentId && x.IsActive == true, cancellationToken);
 
         if (department == null)
             return Errors.General.NotFound(departmentId.Value);
