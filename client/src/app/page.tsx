@@ -1,9 +1,3 @@
-import Counter from "./counter";
-
 export default function Home() {
-  return (
-    <main className="p-10">
-      <Counter />
-    </main>
-  );
+  return <span>Главная страница прекрасного сайта</span>;
 }
