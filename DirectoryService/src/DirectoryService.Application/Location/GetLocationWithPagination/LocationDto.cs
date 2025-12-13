@@ -28,4 +28,4 @@ public record LocationDto
     
 };
 
-public record GetLocationDto(List<LocationDto> Locations, long TotalCount);
+public record PaginationLocationResponse(IReadOnlyList<LocationDto> Items, long TotalCount, int Page, int PageSize, int TotalPages);

@@ -6,7 +6,8 @@ public record GetLocationWithPaginationRequest(
     string? City,
     bool? IsActive,
     List<Guid>? LocationIds,
-    PaginationRequest Pagination);
+    int Page = 1,
+    int PageSize = 20);
 
 public record PaginationRequest(
     int Page = 1,
