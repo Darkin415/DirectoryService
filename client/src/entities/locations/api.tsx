@@ -2,6 +2,7 @@
 import { apiClient } from "@/shared/api/axios-instance";
 import { Location } from "./type";
 import { PaginationResponse } from "@/shared/api/type";
+import { queryOptions } from "@tanstack/react-query";
 
 export type PaginationRequest = {
   page: number;
@@ -74,5 +75,21 @@ export const locationsApi = {
     const response = await apiClient.post("/locations", request);
 
     return response.data;
+  },
+};
+
+export const locationsQueryOptions = {
+  baseKey: "locations",
+  getLocationsOptions: ({
+    page,
+    pageSize,
+  }: {
+    page: number;
+    pageSize: number;
+  }) => {
+    return queryOptions({
+      queryFn: () => locationsApi.getLocations({ page, pageSize: pageSize }),
+      queryKey: [locationsQueryOptions.baseKey, page],
+    });
   },
 };
