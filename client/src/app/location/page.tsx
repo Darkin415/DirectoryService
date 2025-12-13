@@ -19,10 +19,9 @@ import { useState } from "react";
 
 const PAGE_SIZE = 2;
 
-const queryClient = useQueryClient();
-
 export default function LocationPage() {
   const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryFn: () => locationsApi.getLocations({ page, pageSize: PAGE_SIZE }),
