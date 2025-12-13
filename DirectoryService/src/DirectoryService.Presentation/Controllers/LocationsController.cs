@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DirectoryService.Presentation.Controllers;
 public class LocationsController : ApplicationController
 {
-    [HttpPost("api/locations")]
+    [HttpPost("/api/locations")]
     public async Task<IActionResult> AddLocation(
         [FromServices] AddLocationsHandler handler,
         [FromBody] AddLocationsRequest request,
@@ -26,8 +26,8 @@ public class LocationsController : ApplicationController
        return Ok(result.Value);
     }
 
-    [HttpGet]
-    public async Task<ActionResult<GetLocationDto>> GetAllLocations(
+    [HttpGet("/api/locations")]
+    public async Task<ActionResult<PaginationLocationResponse>> GetAllLocations(
         [FromQuery] GetLocationWithPaginationRequest request,
         
         [FromServices] GetLocationWIthPaginationHandler handler,

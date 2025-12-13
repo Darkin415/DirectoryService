@@ -15,12 +15,14 @@ public class GetLocationWIthPaginationHandler
         _readDbContext = readDbContext;
     }
 
-    public async Task<GetLocationDto?> Handle(
+    public async Task<PaginationLocationResponse?> Handle(
         GetLocationWithPaginationRequest request,
         CancellationToken cancellationToken)
     {
         //запрос на получение локаций
         var locationsQuery = _readDbContext.ReadLocations.AsQueryable();
+        
+        locationsQuery = locationsQuery.OrderBy(e => e.CreatedAt);
        
         //фильтрация по имени
         if(!string.IsNullOrWhiteSpace(request.Search))
@@ -42,20 +44,20 @@ public class GetLocationWIthPaginationHandler
         if (request.IsActive.HasValue)
             locationsQuery = locationsQuery.Where(e => e.IsActive == request.IsActive.Value);
         
-        locationsQuery = locationsQuery.OrderBy(e => e.CreatedAt);
-        
         var totalCount = await locationsQuery.LongCountAsync(cancellationToken);
         
         locationsQuery = locationsQuery
-            .Skip((request.Pagination.Page - 1) * request.Pagination.PageSize)
-            .Take(request.Pagination.PageSize);
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize);
         
-        var locations = await locationsQuery.ToListAsync(cancellationToken);
+        var locations = await locationsQuery.OrderByDescending(l => l.CreatedAt).ToListAsync(cancellationToken);
 
         if (locations.Count == 0)
         {
             return null;
         }
+        
+        int totalPages = (int)Math.Ceiling((double)totalCount / request.PageSize);
         
         var locationsDto = locations
             .Select(loc => new LocationDto
@@ -72,6 +74,6 @@ public class GetLocationWIthPaginationHandler
             UpdatedAt = loc.UpdatedAt
         }).ToList();
         
-        return new GetLocationDto(locationsDto, totalCount);
+        return new PaginationLocationResponse(locationsDto, totalCount, request.Page, request.PageSize, totalPages);
     }
 }

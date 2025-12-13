@@ -7,7 +7,7 @@ public class PositionController : ApplicationController
 {
     
     [HttpPost("api/departments")]
-    public async Task<IActionResult> AddDepartment(
+    public async Task<IActionResult> AddPosition(
         [FromServices] AddPositionHandler handler,
         [FromBody] AddPositionRequest request,
         CancellationToken cancellationToken)

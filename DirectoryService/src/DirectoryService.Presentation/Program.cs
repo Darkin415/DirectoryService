@@ -27,8 +27,16 @@ builder.Services.AddValidatorsFromAssemblyContaining<AddLocationCommandValidator
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 var app = builder.Build();
+app.UseCors(builder =>
+{
+    builder.WithOrigins("http://localhost:3000")
+        .AllowAnyHeader()
+        .AllowCredentials()
+        .AllowAnyMethod();
+});
 app.UseExceptionMiddleware();
 
+builder.Services.AddCors();
 
 
 if (app.Environment.IsDevelopment())

@@ -20,7 +20,7 @@ public class DepartmentController : ApplicationController
         [FromServices] CreateDepartmentHandler handler,
         [FromBody] AddDepartmentRequest request,
         CancellationToken cancellationToken)
-    {
+    { 
         var command = new CreateDepartmentCommand(request.Name, request.Identifier, request.ParentId, request.Locations);
         
         var result =  await handler.Handle(command, cancellationToken);
