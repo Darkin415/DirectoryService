@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarInset } from "@/shared/components/ui/sidebar";
 import { QueryClientProvider } from "@tanstack/react-query";
 import Header from "../header/header";
 import { AppSidebar } from "../sidebar/app-sidebar";
+import { Toaster } from "sonner";
 
 export function Layout({
   children,
@@ -19,6 +20,11 @@ export function Layout({
             <SidebarInset>
               <Header />
               <main className="flex-1 overflow-auto p-10">{children}</main>
+              <Toaster
+                position="top-center"
+                duration={3000}
+                richColors={true}
+              />
             </SidebarInset>
           </div>
         </div>
