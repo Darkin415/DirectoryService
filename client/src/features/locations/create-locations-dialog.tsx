@@ -209,7 +209,7 @@ export function CreateLocationsDialog({ open, onOpenChange }: Props) {
                     id="roomNumber"
                     type="number"
                     placeholder="Например: 35"
-                    {...register("address.roomNumber")}
+                    {...register("address.roomNumber", { valueAsNumber: true })}
                   />
                   {errors.address?.roomNumber && (
                     <p className="text-sm text-destructive">
